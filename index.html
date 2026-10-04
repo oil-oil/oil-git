@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Oil Git 是 Git 可视化查看工具。打开本地仓库，查看文件差异、提交历史、分支与冲突，支持 macOS 和 Windows。">
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="canonical" href="https://oil-oil.github.io/oil-git/">
+  <meta property="og:title" content="Oil Git">
+  <meta property="og:description" content="Git 可视化查看工具">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://oil-oil.github.io/oil-git/">
+  <meta property="og:image" content="https://oil-oil.github.io/oil-git/assets/source-light.jpg">
+  <meta name="theme-color" content="#fcfcfb">
+  <title>Oil Git</title>
+  <script>
+    const previewQuery = new URLSearchParams(location.search);
+    document.documentElement.dataset.previewTheme = previewQuery.get('state') === 'dark' ? 'dark' : 'light';
+    if (previewQuery.get('motion') === 'reduce') document.documentElement.classList.add('reduce-motion');
+  </script>
+  <script defer src="vendor/alpine.min.js"></script>
+  <style>
+    :root {
+      --bg: #fcfcfb;
+      --fg: #242629;
+      --muted: #65686c;
+      --line: #dedfdd;
+      --accent: #2c6654;
+      --sage: #edf0eb;
+      --selected: #e8ede9;
+      --radius: 12px;
+      --sans: "Helvetica Neue", "PingFang SC", sans-serif;
+      --display: "New York", "Songti SC", STSong, serif;
+      --mono: "SFMono-Regular", Consolas, monospace;
+      --ease: cubic-bezier(.22, .72, .22, 1);
+      --motion-fast: 140ms;
+      --motion-ui: 260ms;
+      --motion-enter: 440ms;
+      --breath-time: 5600ms;
+      --breath-lift: -7px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 32px; }
+    body { margin: 0; color: var(--fg); background: var(--bg); font-family: var(--sans); line-height: 1.65; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; border: 0; background: none; cursor: pointer; }
+    a, button { -webkit-tap-highlight-color: transparent; transition: color var(--motion-fast), background-color var(--motion-fast); }
+    a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 5px; }
+    ::selection { color: var(--fg); background: #dce8dd; }
+    [x-cloak] { display: none !important; }
+
+    .top { max-width: 1120px; height: 88px; margin: auto; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; }
+    .logo { display: flex; align-items: center; gap: 11px; font-size: 23px; font-weight: 550; letter-spacing: -.7px; }
+    .logo svg { width: 25px; height: 25px; }
+    .top nav { display: flex; gap: 28px; align-items: center; font-size: 14px; }
+    .top nav a { color: var(--muted); padding: 10px 0; }
+    .top nav a:hover { color: var(--fg); }
+    .top nav a:active { color: var(--accent); }
+
+    .hero { text-align: center; padding: 37px 24px 0; }
+    .hero h1 { font: 600 96px/1.15 var(--display); letter-spacing: -3px; margin: 0 0 24px; }
+    .hero h1, .hero-description, .hero > .download, .os-note { animation: intro var(--motion-enter) var(--ease) both; }
+    .hero-description { animation-delay: 40ms; }
+    .hero > .download { animation-delay: 80ms; }
+    .os-note { animation-delay: 120ms; }
+    .hero-description { font-size: 18px; color: var(--muted); margin: 0 0 26px; }
+    .download { display: inline-flex; align-items: center; gap: 24px; color: white; background: var(--fg); border-radius: 100px; padding: 13px 26px; font-size: 15px; }
+    .download:hover { background: #42474a; }
+    .download:active { background: #565c5d; transition-duration: 70ms; }
+    .cta-arrow { display: inline-block; transition: transform var(--motion-fast) var(--ease); }
+    .download:is(:hover, :focus-visible) .cta-arrow { transform: translate(2px, -2px); }
+    .os-note { font-size: 13px; color: var(--muted); margin-top: 14px; }
+    .product { max-width: 1080px; margin: 42px auto 0; position: relative; transform: translateY(10px); }
+    .product.settled { transform: translateY(0); transition: transform var(--motion-enter) var(--ease) 60ms; }
+    .product-stage { position: relative; isolation: isolate; }
+    .product-stage::before { content: ""; position: absolute; left: 5%; right: 5%; height: 64px; bottom: -32px; z-index: -1; pointer-events: none; opacity: .62; transform: scaleX(.96); background: radial-gradient(ellipse at center, rgb(52 57 58 / .08), rgb(52 57 58 / .02) 48%, transparent 72%); animation: breathe-shadow var(--breath-time) cubic-bezier(.37, 0, .63, 1) infinite; }
+    .product-breath { animation: breathe-frame var(--breath-time) cubic-bezier(.37, 0, .63, 1) infinite; }
+    .product:not(.settled) .product-breath, .product:not(.settled) .product-stage::before,
+    .product:is(:hover, :focus-within, .is-resting) .product-breath,
+    .product:is(:hover, :focus-within, .is-resting) .product-stage::before { animation-play-state: paused; }
+    @keyframes breathe-frame {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(var(--breath-lift)); }
+    }
+    @keyframes breathe-shadow {
+      0%, 100% { opacity: .62; transform: scaleX(.96); }
+      50% { opacity: .38; transform: scaleX(1.05); }
+    }
+    .product-view { position: relative; width: 100%; aspect-ratio: 2.14; overflow: hidden; border-radius: var(--radius); box-shadow: 0 22px 48px #34393a0d, 0 1px 4px #34393a15; background: #f0f0f0; }
+    .product-view img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; }
+    .theme-dark { opacity: 0; }
+    .product-view.is-dark .theme-dark { opacity: 1; }
+    .product-view.ready .theme-dark { transition: opacity var(--motion-ui) var(--ease); }
+    html[data-preview-theme="dark"] .product-view:not(.ready) .theme-dark { opacity: 1; }
+    html[data-preview-theme="dark"] .theme-picker:not(.ready) .theme-indicator { transform: translateX(98px); }
+    .product-controls { margin-top: 20px; }
+    .theme-picker { position: relative; display: inline-grid; grid-template-columns: 90px 90px; gap: 8px; padding: 4px; color: var(--muted); font-size: 13px; }
+    .theme-indicator { position: absolute; left: 4px; top: 4px; bottom: 4px; width: 90px; border-radius: 100px; background: var(--selected); pointer-events: none; }
+    .theme-picker.ready .theme-indicator { transition: transform var(--motion-ui) var(--ease); }
+    .theme-picker.is-dark .theme-indicator { transform: translateX(98px); }
+    .theme-picker button { position: relative; min-height: 44px; border-radius: 100px; display: flex; justify-content: center; align-items: center; gap: 8px; color: var(--muted); padding: 8px 14px; }
+    .theme-picker button:not(.selected):hover { background: #f0f0ed; }
+    .theme-picker button:active { color: var(--fg); }
+    .theme-picker button.selected { color: var(--accent); }
+    .swatch { width: 11px; height: 11px; border-radius: 50%; background: var(--bg); border: 1px solid #adb5b0; }
+    .swatch.dark { background: #282c34; border-color: #282c34; }
+
+    .list-section { max-width: 1000px; margin: 76px auto 0; padding: 0 24px 64px; }
+    .list-section h2 { font: 500 36px/1.4 var(--display); text-align: center; margin: 0 0 36px; }
+    .feature-row { display: grid; grid-template-columns: 48px 210px 1fr; align-items: start; padding: 27px 0; border-top: 1px solid var(--line); gap: 20px; }
+    .feature-row:last-child { border-bottom: 1px solid var(--line); }
+    .number { font: 13px/28px var(--mono); color: var(--muted); }
+    .feature-row h3 { font-size: 17px; font-weight: 500; margin: 0; line-height: 1.65; }
+    .feature-row p { font-size: 16px; color: var(--muted); margin: 0; text-wrap: pretty; }
+    .nowrap { white-space: nowrap; }
+    .install-break { display: none; }
+
+    .agent-section { max-width: 1000px; margin: 0 auto; padding: 0 24px 64px; display: grid; grid-template-columns: 1fr 1.15fr; align-items: center; gap: 48px; }
+    .agent-section h2 { font: 500 30px/1.4 var(--display); margin: 0 0 13px; }
+    .agent-section p { color: var(--muted); font-size: 16px; margin: 0; max-width: 330px; }
+    .command { background: #f0f1ee; padding: 23px 26px; border-radius: 8px; }
+    .command-label { display: block; color: var(--muted); font-size: 14px; margin-bottom: 12px; }
+    .command code { font: 14px/1.75 var(--mono); overflow-wrap: anywhere; }
+    .command code span { color: var(--accent); }
+
+    .bottom { max-width: 1032px; margin: 0 auto 60px; padding: 38px 40px 30px; background: var(--sage); border-radius: var(--radius); }
+    .bottom h2 { font: 500 32px/1.4 var(--display); margin: 0 0 28px; }
+    .platforms { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+    .platforms h3 { display: flex; align-items: baseline; gap: 14px; font-size: 17px; font-weight: 500; margin: 0 0 11px; }
+    .platforms h3 span { color: var(--muted); font-size: 13px; font-weight: 400; }
+    .platforms p { font-size: 16px; color: var(--muted); margin: 0; max-width: 375px; text-wrap: pretty; }
+    .install-note { margin: 28px 0 0; color: var(--muted); font-size: 14px; }
+    .footer { max-width: 1120px; padding: 0 24px 36px; margin: auto; display: flex; justify-content: space-between; gap: 20px; color: var(--muted); font-size: 13px; }
+    @keyframes intro {
+      from { opacity: .82; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .bottom { position: relative; isolation: isolate; }
+    .bottom::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: var(--accent); opacity: 0; z-index: -1; pointer-events: none; }
+    .bottom:target::after { animation: arrival 600ms var(--ease); }
+    @keyframes arrival { from { opacity: .045; } to { opacity: 0; } }
+
+    @media (max-width: 700px) {
+      .top { height: 76px; padding: 0 22px; }
+      .top nav a:not(:last-child) { display: none; }
+      .hero { padding: 27px 20px 0; }
+      .hero h1 { font-size: 72px; letter-spacing: -2px; }
+      .hero-description { font-size: 17px; }
+      .os-note { font-size: 12px; }
+      .product { margin-top: 34px; --breath-lift: -4px; }
+      .product-view { aspect-ratio: auto; height: 306px; }
+      .product-view img { width: 1100px; height: auto; max-width: none; left: -660px; top: 0; object-fit: initial; }
+      .product-controls { margin-top: 14px; }
+      .list-section { margin-top: 52px; padding: 0 24px 42px; }
+      .list-section h2 { font-size: 30px; margin-bottom: 28px; }
+      .feature-row { grid-template-columns: 26px 1fr; column-gap: 12px; row-gap: 8px; padding: 23px 0; }
+      .feature-row p { grid-column: 2; }
+      .agent-section { display: block; padding: 0 24px 42px; }
+      .agent-section h2 { font-size: 28px; }
+      .agent-section p { max-width: none; }
+      .command { margin-top: 22px; padding: 22px; }
+      .command-label { font-size: 14px; }
+      .command code { font-size: 13px; }
+      .bottom { margin: 0 20px 34px; padding: 28px 24px; }
+      .bottom h2 { font-size: 28px; margin-bottom: 26px; }
+      .install-break { display: initial; }
+      .platforms { grid-template-columns: 1fr; gap: 25px; }
+      .platforms h3 { flex-wrap: wrap; gap: 5px 12px; }
+      .platforms h3 span { font-size: 13px; }
+      .install-note { margin-top: 26px; }
+      .footer { flex-direction: column; gap: 6px; font-size: 12px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .product, .product-breath, .cta-arrow { transform: none !important; }
+    }
+    html.reduce-motion { scroll-behavior: auto; }
+    .reduce-motion *, .reduce-motion *::before, .reduce-motion *::after { animation: none !important; transition: none !important; }
+    .reduce-motion .product, .reduce-motion .product-breath, .reduce-motion .cta-arrow { transform: none !important; }
+  </style>
+</head>
+<body x-data="{theme:document.documentElement.dataset.previewTheme,ready:false,imagesReady:false,inView:false,pageVisible:!document.hidden}"
+  @visibilitychange.document="pageVisible=!document.hidden"
+  x-init="$nextTick(async () => {
+    ready=true;
+    const observer = new IntersectionObserver(([entry]) => { inView=entry.intersectionRatio >= .2; }, {threshold:[0,.2]});
+    observer.observe($refs.product);
+    await Promise.allSettled([$refs.light.decode(), $refs.dark.decode()]);
+    imagesReady=true;
+  })">
+  <header class="top">
+    <a href="#" class="logo" aria-label="Oil Git 首页">
+      <svg viewBox="0 0 28 28" fill="none" aria-hidden="true">
+        <path d="M7 9v10m0-5c9 0 14-2 14-6" stroke="currentColor" stroke-width="2"/>
+        <circle cx="7" cy="6" r="3" stroke="currentColor" stroke-width="2"/>
+        <circle cx="7" cy="22" r="3" stroke="currentColor" stroke-width="2"/>
+        <circle cx="21" cy="5" r="3" stroke="currentColor" stroke-width="2"/>
+      </svg>
+      Oil Git
+    </a>
+    <nav aria-label="主导航">
+      <a href="#why">功能</a>
+      <a href="#agent">给 Agent 用</a>
+      <a href="https://github.com/oil-oil/oil-git">GitHub ↗</a>
+      <a href="#download">下载与安装 ↗</a>
+    </nav>
+  </header>
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <h1 id="hero-title">Oil Git</h1>
+      <p class="hero-description">Git 可视化查看工具</p>
+      <a class="download" href="#download">下载与安装 <span class="cta-arrow" aria-hidden="true">↗</span></a>
+      <div class="os-note">macOS / Windows · 无需登录</div>
+      <div class="product" id="product" x-ref="product" :class="{settled:imagesReady,'is-resting':!inView||!pageVisible}">
+        <div class="product-stage">
+          <div class="product-breath">
+            <div class="product-view" :class="{'is-dark':theme==='dark',ready:imagesReady}">
+              <img x-ref="light" :aria-hidden="theme!=='light'" src="assets/source-light.jpg" alt="Oil Git 浅色界面：左侧查看文件状态，右侧对比修改前后的代码" decoding="async" fetchpriority="high" draggable="false">
+              <img x-ref="dark" class="theme-dark" :aria-hidden="theme!=='dark'" src="assets/source-dark.jpg" alt="Oil Git 深色界面：查看文件列表和左右代码差异" decoding="async" draggable="false">
+            </div>
+          </div>
+        </div>
+        <div class="product-controls">
+          <div class="theme-picker" :class="{'is-dark':theme==='dark',ready}" role="group" aria-label="界面主题">
+            <span class="theme-indicator" aria-hidden="true"></span>
+            <button type="button" @click="theme='light'" :class="{selected:theme==='light'}" :aria-pressed="theme==='light'"><span class="swatch" aria-hidden="true"></span>浅色</button>
+            <button type="button" @click="theme='dark'" :class="{selected:theme==='dark'}" :aria-pressed="theme==='dark'"><span class="swatch dark" aria-hidden="true"></span>深色</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="list-section" id="why" aria-labelledby="features-title">
+      <h2 id="features-title">文件变化与提交历史。</h2>
+      <div class="feature-row">
+        <span class="number" aria-hidden="true">01</span>
+        <h3>查看文件差异</h3>
+        <p>未跟踪、未暂存、已暂存与冲突分组显示，点开文件查看改动。</p>
+      </div>
+      <div class="feature-row">
+        <span class="number" aria-hidden="true">02</span>
+        <h3>理清提交与分支</h3>
+        <p>在提交图里查看分支、标签和 <span class="nowrap">HEAD</span>，点开提交查看变更文件。</p>
+      </div>
+      <div class="feature-row">
+        <span class="number" aria-hidden="true">03</span>
+        <h3>观察项目变化</h3>
+        <p>外部改动会自动显示，也支持查看<span class="nowrap">工作树与 stash</span>。</p>
+      </div>
+    </section>
+
+    <section class="agent-section" id="agent" aria-labelledby="agent-title">
+      <div>
+        <h2 id="agent-title">让 Agent 打开项目。</h2>
+        <p>应用附带 CLI 和 Skill，让 Agent 打开仓库、<span class="nowrap">读取 Git 状态</span>。</p>
+      </div>
+      <div class="command">
+        <span class="command-label">配置命令行入口后，在项目目录中运行</span>
+        <code><span>oil-git</span> open . --view changes</code>
+      </div>
+    </section>
+
+    <section class="bottom" id="download" aria-labelledby="install-title">
+      <h2 id="install-title">安装后，<br class="install-break">打开你的仓库。</h2>
+      <div class="platforms">
+        <div>
+          <h3>macOS <span>Apple Silicon / Intel</span></h3>
+          <p>打开 DMG，把 Oil Git 拖入 Applications。启动后选择项目文件夹。</p>
+        </div>
+        <div>
+          <h3>Windows <span>x64</span></h3>
+          <p>运行安装程序，按提示完成安装。启动后选择项目文件夹。</p>
+        </div>
+      </div>
+      <p class="install-note">需要系统 Git。运行无需 Node 或 Python。</p>
+    </section>
+  </main>
+  <footer class="footer">
+    <span>Oil Git · oil 欧呦制作 · <a href="https://github.com/oil-oil/oil-git">GitHub ↗</a></span>
+    <span>只读 Git · 本地运行 · 无需登录</span>
+  </footer>
+</body>
+</html>

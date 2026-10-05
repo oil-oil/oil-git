@@ -2,7 +2,6 @@
   const root = document.querySelector('.demo-ui');
   if (!root) return;
   const product = root.closest('.product');
-  const cursor = root.querySelector('.demo-cursor');
   const detail = root.querySelector('.demo-details');
   const title = root.querySelector('[data-demo-title]');
   const path = root.querySelector('[data-demo-path]');
@@ -92,7 +91,6 @@
   }
   function stop() {
     controller?.abort(); controller = null;
-    cursor.classList.remove('is-visible','is-clicking');
     detailAnimation?.cancel();
   }
   function updateControl() {
@@ -101,32 +99,22 @@
     toggle.querySelector('use').setAttribute('href',playing ? '#demo-pause' : '#demo-play');
     toggle.querySelector('span').textContent = playing ? '暂停演示' : '播放演示';
   }
-  async function clickTarget(target, signal) {
-    if (!target || !target.getClientRects().length) return;
-    const targetRect = target.getBoundingClientRect(), frame = root.getBoundingClientRect();
-    cursor.classList.add('is-visible');
-    cursor.style.transform = `translate(${targetRect.left - frame.left + targetRect.width * .65 - 4}px,${targetRect.top - frame.top + targetRect.height * .55 - 4}px)`;
-    await wait(580,signal);
-    cursor.classList.add('is-clicking');
-    target.click();
-    await wait(450,signal);
-    cursor.classList.remove('is-clicking');
-    await wait(1700,signal);
-  }
   function sync() {
     if (!canPlay()) { stop(); return; }
     if (controller) return;
     const run = new AbortController(); controller = run;
     (async () => {
+      const scenes = [
+        () => { chooseView('history'); selectCommit(3); },
+        () => selectCommit(2),
+        () => selectCommit(4),
+        () => selectFile('app.ts'),
+      ];
       while (!run.signal.aborted) {
-        await wait(1100,run.signal);
-        await clickTarget(root.querySelector('[data-demo-view="history"]'),run.signal);
-        for (const index of [3,2,4]) {
-          const target = root.querySelector(`[data-demo-commit="${index}"]`);
-          await clickTarget(target.getClientRects().length ? target : root.querySelector('[data-demo-action="next"]'),run.signal);
+        for (const scene of scenes) {
+          await wait(2800,run.signal);
+          scene();
         }
-        await clickTarget(root.querySelector('[data-demo-file="app.ts"]:not([data-staged])')?.getClientRects().length ? root.querySelector('[data-demo-file="app.ts"]:not([data-staged])') : root.querySelector('[data-demo-view="source"]'),run.signal);
-        await wait(1800,run.signal);
       }
     })().catch((error) => { if (!run.signal.aborted) { stop(); console.error('Product demo:',error); } });
   }
@@ -154,5 +142,35 @@
   window.addEventListener('resize',() => { stop(); sync(); });
   window.addEventListener('pagehide',stop);
   window.addEventListener('pageshow',sync);
+  const tilt = product.querySelector('.product-tilt');
+  const nativeDepth = CSS.supports('animation-timeline','scroll(root block)') && CSS.supports('animation-range','0px 1px');
+  if (tilt && !nativeDepth) {
+    let depthFrame = 0;
+    let settings;
+    tilt.style.animation = 'none';
+    const updateDepth = () => {
+      depthFrame = 0;
+      const progress = motionAllowed() ? Math.min(1,Math.max(0,window.scrollY / settings.distance)) : 0;
+      tilt.style.transform = `perspective(${settings.perspective}) rotateX(${(progress * settings.maximum).toFixed(2)}deg)`;
+    };
+    const scheduleDepth = () => {
+      if (!depthFrame && !document.hidden && !product.classList.contains('is-resting')) depthFrame = requestAnimationFrame(updateDepth);
+    };
+    const readDepthSettings = () => {
+      cancelAnimationFrame(depthFrame); depthFrame = 0;
+      const style = getComputedStyle(tilt);
+      settings = {perspective:style.getPropertyValue('--product-perspective').trim(),maximum:parseFloat(style.getPropertyValue('--product-max-tilt')),distance:parseFloat(style.getPropertyValue('--product-scroll-distance'))};
+      updateDepth();
+    };
+    const depthObserver = new MutationObserver(scheduleDepth);
+    depthObserver.observe(product,{attributes:true,attributeFilter:['class']});
+    window.addEventListener('scroll',scheduleDepth,{passive:true});
+    window.addEventListener('resize',readDepthSettings);
+    window.addEventListener('pageshow',readDepthSettings);
+    reduced.addEventListener('change',readDepthSettings);
+    document.addEventListener('visibilitychange',scheduleDepth);
+    window.addEventListener('pagehide',() => { cancelAnimationFrame(depthFrame); depthFrame = 0; });
+    readDepthSettings();
+  }
   selectCommit(selected); selectFile('app.ts'); chooseView('history'); updateControl(); sync();
 })();

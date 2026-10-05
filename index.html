@@ -174,8 +174,8 @@
     .reduce-motion *, .reduce-motion *::before, .reduce-motion *::after { animation: none !important; transition: none !important; }
     .reduce-motion .product, .reduce-motion .product-breath, .reduce-motion .cta-arrow { transform: none !important; }
   </style>
-  <link rel="stylesheet" href="./product-demo.css">
-  <script defer src="./product-demo.js"></script>
+  <link rel="stylesheet" href="./product-demo.css?v=2">
+  <script defer src="./product-demo.js?v=2"></script>
 </head>
 <body x-data="{theme:document.documentElement.dataset.previewTheme,ready:false,demoReady:false,inView:false,pageVisible:!document.hidden}"
   @visibilitychange.document="pageVisible=!document.hidden"
@@ -210,6 +210,7 @@
       <div class="os-note">macOS / Windows · 无需登录</div>
       <div class="product" id="product" x-ref="product" :class="{settled:demoReady,'is-resting':!inView||!pageVisible}">
         <div class="product-stage">
+          <div class="product-tilt">
           <div class="product-breath">
             <div class="product-view demo-ui" data-view="history" :class="{'is-dark':theme==='dark',ready:demoReady}">
               <svg class="demo-symbols" aria-hidden="true"><defs>
@@ -270,8 +271,8 @@
                 </div>
               </div>
               <div class="demo-footer"><span class="demo-status-dot" aria-hidden="true"></span><span>界面演示</span><button class="demo-toggle" data-demo-action="toggle" type="button"><svg class="demo-icon" aria-hidden="true"><use href="#demo-pause"/></svg><span>暂停演示</span></button><span>只读</span></div>
-              <div class="demo-cursor" aria-hidden="true"><span class="demo-click"></span><svg viewBox="0 0 25 30"><path d="M4 4v21l5.5-5 4.2 8 3.8-2-4.4-7.8 7.8-1.2z" fill="#fff" stroke="#262b30" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
             </div>
+          </div>
           </div>
         </div>
         <div class="product-controls">

@@ -64,17 +64,37 @@
 .demo-toggle { display:flex; align-items:center; gap:5px; margin-left:auto; padding:2px 5px; border-radius:4px; }
 .demo-toggle .demo-icon { width:12px; height:12px; }
 .demo-footer > span:last-child { margin-left:9px; }
-.demo-cursor { position:absolute; top:0; left:0; width:25px; height:30px; pointer-events:none; z-index:5; opacity:0; transition:transform 520ms var(--ease),opacity var(--motion-fast); }
-.demo-cursor.is-visible { opacity:1; }
-.demo-cursor > svg { width:25px; height:30px; display:block; filter:drop-shadow(0 2px 2px #0002); }
-.demo-click { position:absolute; left:4px; top:4px; width:32px; height:32px; border:2px solid var(--d-green); border-radius:50%; opacity:0; transform:translate(-50%,-50%) scale(.25); }
-.demo-cursor.is-clicking .demo-click { animation:demo-click 430ms var(--ease); }
-.demo-cursor.is-clicking > svg { animation:demo-press 220ms var(--ease); }
-@keyframes demo-click { 0% { opacity:.7; transform:translate(-50%,-50%) scale(.25); } 100% { opacity:0; transform:translate(-50%,-50%) scale(1); } }
-@keyframes demo-press { 50% { transform:scale(.9); } }
 @media(max-width:900px) { .demo-workspace { grid-template-columns:155px minmax(0,1fr); } .demo-history { grid-template-columns:minmax(180px,.8fr) minmax(0,1.2fr); } .demo-commit { padding-left:59px; } .demo-details { padding:14px 10px; } }
 @media(max-width:700px) { .demo-workspace { grid-template-columns:1fr; } .demo-sidebar,.demo-log { display:none; } .demo-history { grid-template-columns:1fr; } .demo-toolbar { height:36px; padding:0 12px; font-size:11px; } .demo-toolbar-note { font-size:10px; } .demo-tabs { height:34px; padding:0 8px; } .demo-tabs button { font-size:11px; padding:4px 10px; } .demo-details { padding:12px 14px 6px; } .demo-detail-heading h3 { font-size:12px; } .demo-comparison { margin:5px 0 8px; font-size:10px; } .demo-detail-file { padding:7px 9px; margin-bottom:9px; } .demo-code-row { font-size:11px; padding:3px 7px; grid-template-columns:22px 22px minmax(0,1fr); line-height:1.65; } .demo-source { padding:10px 12px; } .demo-source-heading { margin-bottom:9px; } .demo-source-heading strong { font-size:11px; } .demo-source-heading span { font-size:10px; } .demo-split { gap:8px; } .demo-footer { height:21px; } }
 
-@media(prefers-reduced-motion:reduce) { .demo-cursor,.demo-toggle { display:none; } }
-.reduce-motion .demo-cursor,.reduce-motion .demo-toggle { display:none; }
+@media(prefers-reduced-motion:reduce) { .demo-toggle { display:none; } }
+.reduce-motion .demo-toggle { display:none; }
 @media(max-width:700px) { .product-view.demo-ui { height:340px; } }
+
+/* Scroll tilts the whole card as one plane; content keeps its normal layout. */
+.product-tilt {
+  --product-perspective: 1400px;
+  --product-max-tilt: 8deg;
+  --product-scroll-distance: 620px;
+  transform-origin: 50% 50%;
+  transform: perspective(var(--product-perspective)) rotateX(0deg);
+}
+@keyframes product-scroll-depth {
+  from { transform: perspective(var(--product-perspective)) rotateX(0deg); }
+  to { transform: perspective(var(--product-perspective)) rotateX(var(--product-max-tilt)); }
+}
+@supports (animation-timeline: scroll(root block)) and (animation-range: 0px 1px) {
+  .product-tilt {
+    animation: product-scroll-depth linear both;
+    animation-duration: auto;
+    animation-timeline: scroll(root block);
+    animation-range: 0px var(--product-scroll-distance);
+  }
+}
+@media(max-width:700px) {
+  .product-tilt { --product-perspective: 1100px; --product-max-tilt: 6deg; --product-scroll-distance: 440px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .product-tilt { animation:none !important; transform:none !important; }
+}
+.reduce-motion .product-tilt { animation:none !important; transform:none !important; }

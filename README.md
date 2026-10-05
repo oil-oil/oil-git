@@ -12,6 +12,6 @@ GitHub Pages 首页：https://oil-oil.github.io/oil-git/
 
 Alpine.js 的 MIT 许可在 `vendor/alpine.LICENSE.md`。
 
-下载按钮直接链接到已发布的 Release 安装包。更新版本时核对 macOS、Windows 的资产链接与 SHA256SUMS，安装说明不能代替实际下载入口。
+下载按钮直接链接到已发布的 Release 安装包。更新版本时核对 macOS、Windows 的资产链接与 SHA256SUMS，下载区突出平台、架构和真实按钮；版本与 Git 依赖简短标注，不追加安装教程或多余状态说明。
 
 Apple 与 Windows 图标来自 Font Awesome Free 6.7.2（Fonticons, Inc.），使用 CC BY 4.0；完整许可在 `vendor/font-awesome.LICENSE.txt`，SVG 中保留来源与版权说明。

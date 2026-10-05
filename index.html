@@ -64,11 +64,11 @@
     .hero > .download { animation-delay: 80ms; }
     .os-note { animation-delay: 120ms; }
     .hero-description { font-size: 18px; color: var(--muted); margin: 0 0 26px; }
-    .download { display: inline-flex; align-items: center; gap: 24px; color: white; background: var(--fg); border-radius: 100px; padding: 13px 26px; font-size: 15px; }
+    .download { cursor: pointer; display: inline-flex; align-items: center; gap: 24px; color: white; background: var(--fg); border-radius: 100px; padding: 13px 26px; font-size: 15px; }
     .download:hover { background: #42474a; }
     .download:active { background: #565c5d; transition-duration: 70ms; }
-    .cta-arrow { display: inline-block; transition: transform var(--motion-fast) var(--ease); }
-    .download:is(:hover, :focus-visible) .cta-arrow { transform: translate(2px, -2px); }
+    .cta-arrow { display: block; width: 18px; height: 18px; flex-shrink: 0; transition: transform var(--motion-fast) var(--ease); }
+    .download:is(:hover, :focus-visible) .cta-arrow { transform: translateY(2px); }
     .os-note { font-size: 13px; color: var(--muted); margin-top: 14px; }
     .product { max-width: 1080px; margin: 42px auto 0; position: relative; transform: translateY(10px); }
     .product.settled { transform: translateY(0); transition: transform var(--motion-enter) var(--ease) 60ms; }
@@ -129,6 +129,10 @@
     .platforms h3 { display: flex; align-items: baseline; gap: 14px; font-size: 17px; font-weight: 500; margin: 0 0 11px; }
     .platforms h3 span { color: var(--muted); font-size: 13px; font-weight: 400; }
     .platforms p { font-size: 16px; color: var(--muted); margin: 0; max-width: 375px; text-wrap: pretty; }
+    .platform-download { gap: 10px; min-height: 48px; margin-top: 20px; line-height: 1.4; white-space: nowrap; }
+    .platform-icon { display: block; width: 20px; height: 20px; flex-shrink: 0; fill: currentColor; }
+    .install-note a { color: var(--fg); text-decoration: underline; text-underline-offset: 3px; }
+    .install-note a:hover { color: var(--accent); }
     .install-note { margin: 28px 0 0; color: var(--muted); font-size: 14px; }
     .footer { max-width: 1120px; padding: 0 24px 36px; margin: auto; display: flex; justify-content: space-between; gap: 20px; color: var(--muted); font-size: 13px; }
     @keyframes intro {
@@ -210,7 +214,7 @@
     <section class="hero" aria-labelledby="hero-title">
       <h1 id="hero-title">Oil Git</h1>
       <p class="hero-description">Git 可视化查看工具</p>
-      <a class="download" href="#download">下载与安装 <span class="cta-arrow" aria-hidden="true">↗</span></a>
+      <a class="download" href="#download">下载与安装 <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v12m-5-5 5 5 5-5M5 20h14"/></svg></a>
       <div class="os-note">macOS / Windows · 无需登录</div>
       <div class="product" id="product" x-ref="product" :class="{settled:imagesReady,'is-resting':!inView||!pageVisible}">
         <div class="product-stage">
@@ -267,13 +271,15 @@
         <div>
           <h3>macOS <span>Apple Silicon / Intel</span></h3>
           <p>打开 DMG，把 Oil Git 拖入 Applications。启动后选择项目文件夹。</p>
+          <a class="download platform-download" href="https://github.com/oil-oil/oil-git/releases/download/v0.1.0-test.1/oil-git_0.1.0_universal.dmg"><svg class="platform-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc. --><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg><span>下载 macOS</span></a>
         </div>
         <div>
           <h3>Windows <span>x64</span></h3>
           <p>运行安装程序，按提示完成安装。启动后选择项目文件夹。</p>
+          <a class="download platform-download" href="https://github.com/oil-oil/oil-git/releases/download/v0.1.0-test.1/oil-git_0.1.0_x64-setup.exe"><svg class="platform-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc. --><path d="M0 93.7l183.6-25.3v177.4H0V93.7zm0 324.6l183.6 25.3V268.4H0v149.9zm203.8 28L448 480V268.4H203.8v177.9zm0-380.6v180.1H448V32L203.8 65.7z"/></svg><span>下载 Windows</span></a>
         </div>
       </div>
-      <p class="install-note">需要系统 Git。运行无需 Node 或 Python。</p>
+      <p class="install-note">0.1.0 测试版，安装包未签名。需要系统 Git，运行无需 Node 或 Python。<a href="https://github.com/oil-oil/oil-git/releases/tag/v0.1.0-test.1">版本说明</a> · <a href="https://github.com/oil-oil/oil-git/releases/download/v0.1.0-test.1/SHA256SUMS.txt">校验摘要</a></p>
     </section>
   </main>
   <footer class="footer">

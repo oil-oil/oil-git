@@ -87,11 +87,6 @@
       50% { opacity: .38; transform: scaleX(1.05); }
     }
     .product-view { position: relative; width: 100%; aspect-ratio: 2.14; overflow: hidden; border-radius: var(--radius); box-shadow: 0 22px 48px #34393a0d, 0 1px 4px #34393a15; background: #f0f0f0; }
-    .product-view img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; }
-    .theme-dark { opacity: 0; }
-    .product-view.is-dark .theme-dark { opacity: 1; }
-    .product-view.ready .theme-dark { transition: opacity var(--motion-ui) var(--ease); }
-    html[data-preview-theme="dark"] .product-view:not(.ready) .theme-dark { opacity: 1; }
     html[data-preview-theme="dark"] .theme-picker:not(.ready) .theme-indicator { transform: translateX(98px); }
     .product-controls { margin-top: 20px; }
     .theme-picker { position: relative; display: inline-grid; grid-template-columns: 90px 90px; gap: 8px; padding: 4px; color: var(--muted); font-size: 13px; }
@@ -151,8 +146,7 @@
       .os-note { font-size: 12px; }
       .product { margin-top: 34px; --breath-lift: -4px; }
       .product-view { aspect-ratio: auto; height: 306px; }
-      .product-view img { width: 1100px; height: auto; max-width: none; left: -660px; top: 0; object-fit: initial; }
-      .product-controls { margin-top: 14px; }
+        .product-controls { margin-top: 14px; }
       .list-section { margin-top: 52px; padding: 0 24px 42px; }
       .list-section h2 { font-size: 30px; margin-bottom: 28px; }
       .feature-row { grid-template-columns: 26px 1fr; column-gap: 12px; row-gap: 8px; padding: 23px 0; }
@@ -180,15 +174,16 @@
     .reduce-motion *, .reduce-motion *::before, .reduce-motion *::after { animation: none !important; transition: none !important; }
     .reduce-motion .product, .reduce-motion .product-breath, .reduce-motion .cta-arrow { transform: none !important; }
   </style>
+  <link rel="stylesheet" href="./product-demo.css">
+  <script defer src="./product-demo.js"></script>
 </head>
-<body x-data="{theme:document.documentElement.dataset.previewTheme,ready:false,imagesReady:false,inView:false,pageVisible:!document.hidden}"
+<body x-data="{theme:document.documentElement.dataset.previewTheme,ready:false,demoReady:false,inView:false,pageVisible:!document.hidden}"
   @visibilitychange.document="pageVisible=!document.hidden"
   x-init="$nextTick(async () => {
     ready=true;
     const observer = new IntersectionObserver(([entry]) => { inView=entry.intersectionRatio >= .2; }, {threshold:[0,.2]});
     observer.observe($refs.product);
-    await Promise.allSettled([$refs.light.decode(), $refs.dark.decode()]);
-    imagesReady=true;
+    demoReady=true;
   })">
   <header class="top">
     <a href="#" class="logo" aria-label="Oil Git 首页">
@@ -213,12 +208,69 @@
       <p class="hero-description">Git 可视化查看工具</p>
       <a class="download" href="#download">下载与安装 <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v12m-5-5 5 5 5-5M5 20h14"/></svg></a>
       <div class="os-note">macOS / Windows · 无需登录</div>
-      <div class="product" id="product" x-ref="product" :class="{settled:imagesReady,'is-resting':!inView||!pageVisible}">
+      <div class="product" id="product" x-ref="product" :class="{settled:demoReady,'is-resting':!inView||!pageVisible}">
         <div class="product-stage">
           <div class="product-breath">
-            <div class="product-view" :class="{'is-dark':theme==='dark',ready:imagesReady}">
-              <img x-ref="light" :aria-hidden="theme!=='light'" src="assets/source-light.jpg" alt="Oil Git 浅色界面：左侧查看文件状态，右侧对比修改前后的代码" decoding="async" fetchpriority="high" draggable="false">
-              <img x-ref="dark" class="theme-dark" :aria-hidden="theme!=='dark'" src="assets/source-dark.jpg" alt="Oil Git 深色界面：查看文件列表和左右代码差异" decoding="async" draggable="false">
+            <div class="product-view demo-ui" data-view="history" :class="{'is-dark':theme==='dark',ready:demoReady}">
+              <svg class="demo-symbols" aria-hidden="true"><defs>
+                <symbol id="demo-folder" viewBox="0 0 20 20"><path d="M2 5h6l2 2h8v10H2z"/></symbol>
+                <symbol id="demo-branch" viewBox="0 0 20 20"><path d="M5 6v8m0-4c8 0 10-2 10-4"/><circle cx="5" cy="4" r="2"/><circle cx="5" cy="16" r="2"/><circle cx="15" cy="4" r="2"/></symbol>
+                <symbol id="demo-code" viewBox="0 0 20 20"><path d="m6 6-4 4 4 4m8-8 4 4-4 4m-3-9-2 10"/></symbol>
+                <symbol id="demo-chevron" viewBox="0 0 20 20"><path d="m7 4 6 6-6 6"/></symbol>
+                <symbol id="demo-pause" viewBox="0 0 20 20"><path d="M6 4v12m8-12v12"/></symbol>
+                <symbol id="demo-play" viewBox="0 0 20 20"><path d="m6 3 10 7-10 7z"/></symbol>
+              </defs></svg>
+              <div class="demo-toolbar">
+                <span class="demo-project"><svg class="demo-icon" aria-hidden="true"><use href="#demo-folder"/></svg>验收仓库</span>
+                <span class="demo-branch"><svg class="demo-icon" aria-hidden="true"><use href="#demo-branch"/></svg>main</span>
+                <span class="demo-toolbar-note">Git 可视化</span>
+              </div>
+              <div class="demo-workspace">
+                <aside class="demo-sidebar" aria-label="工作区文件">
+                  <h3>源代码管理</h3>
+                  <div class="demo-group"><span>⌄</span>暂存的更改<span>1</span></div>
+                  <button class="demo-file" data-demo-file="app.ts" data-staged type="button"><svg class="demo-file-icon" viewBox="0 0 16 16" aria-hidden="true" data-demo-file-icon><path fill="#0288d1" d="M2 2v12h12V2zm4 6h3v1H8v4H7V9H6zm5 0h2v1h-2v1h1a1.003 1.003 0 0 1 1 1v1a1.003 1.003 0 0 1-1 1h-2v-1h2v-1h-1a1.003 1.003 0 0 1-1-1V9a1.003 1.003 0 0 1 1-1"/></svg><span>app.ts</span><span class="demo-file-status">M</span></button>
+                  <div class="demo-group"><span>⌄</span>更改<span>2</span></div>
+                  <button class="demo-file" data-demo-file="app.ts" type="button"><svg class="demo-file-icon" viewBox="0 0 16 16" aria-hidden="true" data-demo-file-icon><path fill="#0288d1" d="M2 2v12h12V2zm4 6h3v1H8v4H7V9H6zm5 0h2v1h-2v1h1a1.003 1.003 0 0 1 1 1v1a1.003 1.003 0 0 1-1 1h-2v-1h2v-1h-1a1.003 1.003 0 0 1-1-1V9a1.003 1.003 0 0 1 1-1"/></svg><span>app.ts</span><span class="demo-file-status">M</span></button>
+                  <button class="demo-file" data-demo-file="新的想法.md" type="button"><svg class="demo-file-icon" viewBox="0 0 32 32" aria-hidden="true" data-demo-file-icon><path fill="#42a5f5" d="m14 10-4 3.5L6 10H4v12h4v-6l2 2 2-2v6h4V10zm12 6v-6h-4v6h-4l6 8 6-8z"/></svg><span>新的想法.md</span><span class="demo-file-status untracked">U</span></button>
+                </aside>
+                <div class="demo-main">
+                  <div class="demo-tabs" role="group" aria-label="演示视图">
+                    <button data-demo-view="source" type="button"><svg class="demo-icon" aria-hidden="true"><use href="#demo-code"/></svg>源码</button>
+                    <button data-demo-view="history" class="is-selected" type="button"><svg class="demo-icon" aria-hidden="true"><use href="#demo-branch"/></svg>分支</button>
+                  </div>
+                  <div class="demo-history">
+                    <div class="demo-log">
+                      <div class="demo-log-title">当前 HEAD 的历史</div>
+                      <div class="demo-commit-list">
+                        <svg class="demo-graph" viewBox="0 0 46 318" fill="none" aria-hidden="true">
+                          <path d="M13 26v53c0 50 0 84 0 106v106" stroke="var(--d-green)" stroke-width="2"/>
+                          <path d="M13 79c0 46 28 55 28 106v53c0 26-28 30-28 53" stroke="var(--d-purple)" stroke-width="2"/>
+                          <g stroke-width="2" fill="var(--d-bg)"><circle cx="13" cy="26" r="5" stroke="var(--d-green)"/><circle cx="13" cy="79" r="5" stroke="var(--d-green)"/><circle cx="13" cy="132" r="5" stroke="var(--d-green)"/><circle cx="41" cy="185" r="5" stroke="var(--d-purple)"/><circle cx="41" cy="238" r="5" stroke="var(--d-purple)"/><circle cx="13" cy="291" r="5" stroke="var(--d-green)"/></g>
+                        </svg>
+                        <button class="demo-commit" data-demo-commit="0" type="button"><span class="demo-commit-title">更新项目的使用说明</span><span class="demo-ref">main ← HEAD</span></button>
+<button class="demo-commit" data-demo-commit="1" type="button"><span class="demo-commit-title">合并任务列表功能</span><span class="demo-ref">v0.1.0</span></button>
+<button class="demo-commit" data-demo-commit="2" type="button"><span class="demo-commit-title">调整首页主题和文字层级</span></button>
+<button class="demo-commit" data-demo-commit="3" type="button"><span class="demo-commit-title">完善任务的筛选与空状态</span><span class="demo-ref feature">feature/task-list</span></button>
+<button class="demo-commit" data-demo-commit="4" type="button"><span class="demo-commit-title">增加任务列表与完成状态</span></button>
+<button class="demo-commit" data-demo-commit="5" type="button"><span class="demo-commit-title">创建项目，建立基础页面</span></button>
+                      </div>
+                    </div>
+                    <section class="demo-details" aria-label="提交详情">
+                      <div class="demo-detail-heading"><h3 data-demo-title>完善任务的筛选与空状态</h3><div class="demo-nav"><button type="button" data-demo-action="previous" aria-label="上一个提交"><svg class="demo-icon" style="transform:rotate(180deg)" aria-hidden="true"><use href="#demo-chevron"/></svg></button><button type="button" data-demo-action="next" aria-label="下一个提交"><svg class="demo-icon" aria-hidden="true"><use href="#demo-chevron"/></svg></button></div></div>
+                      <p class="demo-comparison">相对第一个父提交 · 1 个文件</p>
+                      <div class="demo-detail-file"><svg class="demo-file-icon" viewBox="0 0 16 16" aria-hidden="true" data-demo-file-icon><path fill="#0288d1" d="M2 2v12h12V2zm4 6h3v1H8v4H7V9H6zm5 0h2v1h-2v1h1a1.003 1.003 0 0 1 1 1v1a1.003 1.003 0 0 1-1 1h-2v-1h2v-1h-1a1.003 1.003 0 0 1-1-1V9a1.003 1.003 0 0 1 1-1"/></svg><span data-demo-path>tasks.ts</span><span>修改</span></div>
+                      <div class="demo-patch" data-demo-patch></div>
+                    </section>
+                  </div>
+                  <div class="demo-source">
+                    <div class="demo-source-heading"><strong data-demo-source-path>app.ts</strong><span data-demo-source-range>暂存区 → 工作区</span></div>
+                    <div class="demo-split"><div><div class="demo-side-label">修改前</div><div data-demo-before></div></div><div><div class="demo-side-label">修改后</div><div data-demo-after></div></div></div>
+                  </div>
+                </div>
+              </div>
+              <div class="demo-footer"><span class="demo-status-dot" aria-hidden="true"></span><span>界面演示</span><button class="demo-toggle" data-demo-action="toggle" type="button"><svg class="demo-icon" aria-hidden="true"><use href="#demo-pause"/></svg><span>暂停演示</span></button><span>只读</span></div>
+              <div class="demo-cursor" aria-hidden="true"><span class="demo-click"></span><svg viewBox="0 0 25 30"><path d="M4 4v21l5.5-5 4.2 8 3.8-2-4.4-7.8 7.8-1.2z" fill="#fff" stroke="#262b30" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
             </div>
           </div>
         </div>

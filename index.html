@@ -50,15 +50,17 @@
     [x-cloak] { display: none !important; }
 
     .top { max-width: 1120px; height: 88px; margin: auto; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; }
-    .logo { display: flex; align-items: center; gap: 11px; font-size: 23px; font-weight: 550; letter-spacing: -.7px; }
-    .logo svg { width: 25px; height: 25px; }
+    .brand-wordmark { font-family: var(--display); font-weight: 600; letter-spacing: -.03em; }
+    .logo { display: flex; align-items: center; gap: 11px; min-height: 44px; font-size: 23px; line-height: 1; }
+    .logo .brand-wordmark { display: block; transform: translateY(1px); }
+    .logo svg { display: block; width: 25px; height: 25px; flex-shrink: 0; }
     .top nav { display: flex; gap: 28px; align-items: center; font-size: 14px; }
     .top nav a { color: var(--muted); padding: 10px 0; }
     .top nav a:hover { color: var(--fg); }
     .top nav a:active { color: var(--accent); }
 
     .hero { text-align: center; padding: 37px 24px 0; }
-    .hero h1 { font: 600 96px/1.15 var(--display); letter-spacing: -3px; margin: 0 0 24px; }
+    .hero h1 { font-size: 96px; line-height: 1.15; margin: 0 0 24px; }
     .hero h1, .hero-description, .hero > .download, .os-note { animation: intro var(--motion-enter) var(--ease) both; }
     .hero-description { animation-delay: 40ms; }
     .hero > .download { animation-delay: 80ms; }
@@ -141,7 +143,7 @@
       .top { height: 76px; padding: 0 22px; }
       .top nav a:not(:last-child) { display: none; }
       .hero { padding: 27px 20px 0; }
-      .hero h1 { font-size: 72px; letter-spacing: -2px; }
+      .hero h1 { font-size: 72px; }
       .hero-description { font-size: 17px; }
       .os-note { font-size: 12px; }
       .product { margin-top: 34px; --breath-lift: -4px; }
@@ -193,7 +195,7 @@
         <circle cx="7" cy="22" r="3" stroke="currentColor" stroke-width="2"/>
         <circle cx="21" cy="5" r="3" stroke="currentColor" stroke-width="2"/>
       </svg>
-      Oil Git
+      <span class="brand-wordmark">Oil Git</span>
     </a>
     <nav aria-label="主导航">
       <a href="#why">功能</a>
@@ -204,7 +206,7 @@
   </header>
   <main>
     <section class="hero" aria-labelledby="hero-title">
-      <h1 id="hero-title">Oil Git</h1>
+      <h1 id="hero-title" class="brand-wordmark">Oil Git</h1>
       <p class="hero-description">Git 可视化查看工具</p>
       <a class="download" href="#download">下载与安装 <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v12m-5-5 5 5 5-5M5 20h14"/></svg></a>
       <div class="os-note">macOS / Windows · 无需登录</div>

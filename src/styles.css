@@ -1147,8 +1147,7 @@ button {
     transform var(--fast);
 }
 .welcome-mark {
-  color: var(--muted);
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 .welcome h1 {
   font-size: 26px;

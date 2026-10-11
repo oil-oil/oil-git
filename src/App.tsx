@@ -347,10 +347,14 @@ export default function App() {
       )}
       {!repo.project ? (
         <main className="welcome">
-          <div className="welcome-mark">
-            <Icon name="branch" size={56} />
-          </div>
-          <h1>oil-git</h1>
+          <img
+            className="welcome-mark"
+            src="/app-icon.png"
+            width={88}
+            height={88}
+            alt=""
+          />
+          <h1>Oil Git</h1>
           <p>
             {(repo.gitStatus.error && (
               <ErrorMessage error={repo.gitStatus.error} />

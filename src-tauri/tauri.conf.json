@@ -1,8 +1,9 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "oil-git",
+  "productName": "Oil Git",
+  "mainBinaryName": "oil-git",
   "version": "0.1.0",
-  "identifier": "org.oiloil.oilgit",
+  "identifier": "com.oiloil.git",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
@@ -12,7 +13,7 @@
   "app": {
     "windows": [
       {
-        "title": "oil-git",
+        "title": "Oil Git",
         "width": 1280,
         "height": 820,
         "minWidth": 720,

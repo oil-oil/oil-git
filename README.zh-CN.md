@@ -1,10 +1,11 @@
 <p align="center">
-  <img src="./assets/readme/hero.svg" width="100%" alt="oil-git 是只读的 Git 可视化桌面工具，帮助你看清项目发生了什么变化。" />
+  <img src="./assets/readme/hero.svg" width="100%" alt="Oil Git 是只读的 Git 可视化桌面工具，帮助你看清项目发生了什么变化。" />
 </p>
 
 <p align="center">
   <a href="https://github.com/oil-oil/oil-git/actions/workflows/build.yml"><img src="https://github.com/oil-oil/oil-git/actions/workflows/build.yml/badge.svg" alt="桌面端构建与测试状态" /></a>
   · <a href="LICENSE">MIT</a>
+  · <a href="https://git.oiloil.org">官网</a>
   · <a href="https://github.com/oil-oil/oil-git/releases">下载</a>
   · <a href="docs/zh-CN/usage.md">使用说明</a>
   · <a href="docs/zh-CN/contributing.md">贡献指南</a>
@@ -12,11 +13,11 @@
   · <a href="README.md">English</a>
 </p>
 
-**oil-git 是一个只读的本地 Git 仓库可视化桌面工具。** 打开项目即可查看当前分支、工作区更改、提交历史和文件差异。你继续在编辑器、终端或 Agent 中使用 Git，oil-git 会跟随真实仓库的变化更新。
+**Oil Git 是一个只读的本地 Git 仓库可视化桌面工具。** 打开项目即可查看当前分支、工作区更改、提交历史和文件差异。你继续在编辑器、终端或 Agent 中使用 Git，Oil Git 会跟随真实仓库的变化更新。
 
 ## 可以查看什么
 
-| 你想确认           | oil-git 展示什么                                                    |
+| 你想确认           | Oil Git 展示什么                                                    |
 | ------------------ | ------------------------------------------------------------------- |
 | 当前在哪个分支     | 提交图、父子关系、本地分支、标签与 `HEAD`                           |
 | 项目改了哪些内容   | 按合并冲突、已暂存更改和工作区更改分组的文件                        |
@@ -31,7 +32,7 @@
 ## 界面预览
 
 <p align="center">
-  <img src="./assets/readme/app-zh-CN.jpg" width="100%" alt="oil-git 深色界面中的本地 Git 仓库。" />
+  <img src="./assets/readme/app-zh-CN.jpg" width="100%" alt="Oil Git 深色界面中的本地 Git 仓库。" />
 </p>
 
 切换界面语言不会翻译仓库名称、分支、提交信息、路径或作者等 Git 原始内容。
@@ -44,7 +45,7 @@
 
 ## Agent 与 CLI
 
-安装包包含 CLI 和 [oil-git Agent Skill](skills/oil-git/SKILL.zh-CN.md)。CLI 可以在现有应用窗口打开项目，或输出只读 JSON 快照：
+安装包包含 CLI 和 [Oil Git Agent Skill](skills/oil-git/SKILL.zh-CN.md)。CLI 可以在现有应用窗口打开项目，或输出只读 JSON 快照：
 
 ```sh
 oil-git open . --view changes
@@ -54,11 +55,11 @@ oil-git skill --path
 oil-git --lang zh-CN --help
 ```
 
-可对 CLI 命令使用 `--lang en` 或 `--lang zh-CN` 指定语言；不指定时每次读取环境变量中的区域设置，未设置时使用英文；这与界面中保存的语言偏好独立。`inspect` 只读取本地仓库，不会打开窗口。Skill 随安装包提供，安装 oil-git 不会修改 Agent 宿主设置。启动器路径和接入方式见 [CLI 使用说明](docs/zh-CN/usage.md#cli-与-ai-agent)。
+可对 CLI 命令使用 `--lang en` 或 `--lang zh-CN` 指定语言；不指定时每次读取环境变量中的区域设置，未设置时使用英文；这与界面中保存的语言偏好独立。`inspect` 只读取本地仓库，不会打开窗口。Skill 随安装包提供，安装 Oil Git 不会修改 Agent 宿主设置。启动器路径和接入方式见 [CLI 使用说明](docs/zh-CN/usage.md#cli-与-ai-agent)。
 
 ## 只读边界
 
-oil-git 不执行提交、暂存、切换分支、合并、fetch、pull、reset 或撤销，也不修改所观察仓库的文件、暂存区、引用、配置或 LFS 对象库。
+Oil Git 不执行提交、暂存、切换分支、合并、fetch、pull、reset 或撤销，也不修改所观察仓库的文件、暂存区、引用、配置或 LFS 对象库。
 
 - 标准 Git LFS 指针由应用自带的只读过滤器读取。应用展示对象 ID 和大小，不下载文件内容；自定义 LFS 命令与扩展暂不支持。
 - 不运行仓库配置的外部内容过滤器或转换程序。若过滤器阻止安全读取，应用会说明限制。
@@ -68,7 +69,7 @@ oil-git 不执行提交、暂存、切换分支、合并、fetch、pull、reset 
 
 ## 开发
 
-oil-git 使用 Tauri 2、React、TypeScript 和 Rust。Rust 通过系统 Git 读取仓库，打包后的应用不启动本地 HTTP 服务。
+Oil Git 使用 Tauri 2、React、TypeScript 和 Rust。Rust 通过系统 Git 读取仓库，打包后的应用不启动本地 HTTP 服务。
 
 ```sh
 npm ci

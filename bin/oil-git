@@ -4,12 +4,12 @@ if [ -n "${OIL_GIT_APP:-}" ]; then
   task_app_path="$OIL_GIT_APP"
 elif [ "${0%/Contents/Resources/bin/oil-git}" != "$0" ]; then
   task_app_path="${0%/Contents/Resources/bin/oil-git}"
-elif [ -d '/Applications/oil-git.app' ]; then
-  task_app_path='/Applications/oil-git.app'
-elif [ -d "$HOME/Applications/oil-git.app" ]; then
-  task_app_path="$HOME/Applications/oil-git.app"
+elif [ -d '/Applications/Oil Git.app' ]; then
+  task_app_path='/Applications/Oil Git.app'
+elif [ -d "$HOME/Applications/Oil Git.app" ]; then
+  task_app_path="$HOME/Applications/Oil Git.app"
 else
-  printf '%s\n' 'oil-git.app was not found. Install it or set OIL_GIT_APP to its full path.' '未找到 oil-git.app。请安装应用，或用 OIL_GIT_APP 指定完整路径。' >&2
+  printf '%s\n' 'Oil Git.app was not found. Install it or set OIL_GIT_APP to its full path.' '未找到 Oil Git.app。请安装应用，或用 OIL_GIT_APP 指定完整路径。' >&2
   exit 1
 fi
 # Normalize the open path before Launch Services changes the working directory.

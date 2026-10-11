@@ -4,7 +4,7 @@
 
 ## 安装与打开
 
-macOS 打开 DMG，将 oil-git 拖入 Applications；Windows 运行 setup.exe。安装包功能范围以对应发布标签和说明为准。电脑需要已有 Git，应用会检测 PATH 和常见安装位置；运行安装后的应用不需要 Node、Rust 或 Python。Windows 缺少 WebView2 时，安装程序可下载微软运行组件。
+macOS 打开 DMG，将 Oil Git 拖入 Applications；Windows 运行 setup.exe。安装包功能范围以对应发布标签和说明为准。电脑需要已有 Git，应用会检测 PATH 和常见安装位置；运行安装后的应用不需要 Node、Rust 或 Python。Windows 缺少 WebView2 时，安装程序可下载微软运行组件。
 
 点击项目按钮或使用 `⌘ O` / `Ctrl O` 选择仓库。选择子目录也能识别所属仓库。最近项目保存在本机，重启时恢复上次项目；移除最近记录不会删除文件或关闭当前项目。
 

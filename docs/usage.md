@@ -1,10 +1,10 @@
-# Using oil-git
+# Using Oil Git
 
 [Home](../README.md) · [简体中文](zh-CN/usage.md)
 
 ## Install and open a repository
 
-On macOS, open the DMG and drag oil-git to Applications. On Windows, run the setup executable. Check the release tag and notes for the package’s feature scope. Your computer needs Git, but running the packaged application does not require Node, Rust, or Python. The application detects Git in PATH and common installation locations. The Windows installer can download Microsoft's WebView2 runtime if it is missing.
+On macOS, open the DMG and drag Oil Git to Applications. On Windows, run the setup executable. Check the release tag and notes for the package’s feature scope. Your computer needs Git, but running the packaged application does not require Node, Rust, or Python. The application detects Git in PATH and common installation locations. The Windows installer can download Microsoft's WebView2 runtime if it is missing.
 
 Use the project button or `⌘ O` / `Ctrl O` to select a repository. Selecting a subdirectory opens its enclosing repository. Recent projects are stored locally, and the last project is restored on restart. Removing a recent item only removes the application's record. It does not delete files or close the current project.
 
@@ -56,11 +56,11 @@ To invoke the optional Windows launcher without changing system execution policy
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\path\to\bin\oil-git.ps1" inspect "C:\path\to\repository" --json
 ```
 
-The launcher and Skill are packaged under `Contents/Resources` on macOS and the installation directory on Windows. You can give the complete `skills/oil-git` directory to your agent host for installation according to its rules. Installing oil-git does not change another application's Skill settings.
+The launcher and Skill are packaged under `Contents/Resources` on macOS and the installation directory on Windows. You can give the complete `skills/oil-git` directory to your agent host for installation according to its rules. Installing Oil Git does not change another application's Skill settings.
 
 ## Read-only scope
 
-oil-git does not commit, checkout, fetch, merge, or undo changes. Ahead/behind counts describe locally available remote-tracking records. Bare and partial-clone repositories are unsupported, including partial clones whose objects have already been downloaded.
+Oil Git does not commit, checkout, fetch, merge, or undo changes. Ahead/behind counts describe locally available remote-tracking records. Bare and partial-clone repositories are unsupported, including partial clones whose objects have already been downloaded.
 
 Standard Git LFS uses a bundled read-only filter: it does not run the repository's LFS program, download content, or write to the LFS object store. Pointers and expanded content are compared in their actual staged or unstaged scope. Custom LFS conversions and extensions are unsupported.
 

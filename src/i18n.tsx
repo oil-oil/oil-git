@@ -232,8 +232,8 @@ const en: Record<string, Translation> = {
   "请先安装 Git 并重新检测。": "Install Git, then check again.",
   "项目已关闭，请重新打开。": "The project is closed. Open it again.",
   "最近项目路径无效。": "The recent project path is invalid.",
-  "请在 oil-git 桌面应用中打开。本地仓库读取需要桌面环境。":
-    "Open this in the oil-git desktop app. Reading local repositories requires the desktop environment.",
+  "请在 Oil Git 桌面应用中打开。本地仓库读取需要桌面环境。":
+    "Open this in the Oil Git desktop app. Reading local repositories requires the desktop environment.",
   "这个项目目录不存在或无法访问。":
     "This project directory does not exist or cannot be accessed.",
   "第一版暂不支持裸仓库，请选择带工作目录的 Git 项目。":
@@ -380,7 +380,7 @@ export function translate(
 }
 
 const errorMessages: Record<string, string> = {
-  desktopRequired: "请在 oil-git 桌面应用中打开。本地仓库读取需要桌面环境。",
+  desktopRequired: "请在 Oil Git 桌面应用中打开。本地仓库读取需要桌面环境。",
   arguments: "命令参数无效。运行 oil-git --help 查看用法。",
   bare: "裸仓库暂不支持。请打开带工作目录的 Git 项目。",
   binary: "此文件不能按 Git 文本行查询作者。",

@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="460" viewBox="0 0 1200 460" role="img" aria-labelledby="title desc">
-  <title id="title">oil-git · See what AI changed</title>
+  <title id="title">Oil Git · See what AI changed</title>
   <desc id="desc">A read-only Git desktop viewer. The diagram uses commits and a tasks.ts diff from a real test repository. See the README for native screenshots and usage.</desc>
   <rect width="1200" height="460" rx="24" fill="#21252b"/>
   <g id="identity" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
@@ -10,7 +10,7 @@
       <circle cx="36" cy="5" r="5" fill="#21252b"/>
     </g>
     <text x="124" y="73" font-size="22" fill="#abb2bf">A Git desktop viewer</text>
-    <text x="59" y="194" font-size="100" font-weight="700" letter-spacing="-5" fill="#d7dae0">oil-git</text>
+    <text x="59" y="194" font-size="100" font-weight="700" letter-spacing="-5" fill="#d7dae0">Oil Git</text>
     <text x="64" y="258" font-size="36" font-weight="500" fill="#d7dae0">See what AI changed.</text>
     <text x="64" y="303" font-size="20" fill="#abb2bf">Branches, commits, and diffs in one window.</text>
     <g id="platforms" transform="translate(64 367)">

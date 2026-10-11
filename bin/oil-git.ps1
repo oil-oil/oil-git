@@ -1,9 +1,9 @@
 ﻿param([Parameter(ValueFromRemainingArguments = $true)][string[]]$LaunchArguments)
 # Pass arguments as an array to preserve spaces and Unicode paths.
 $TaskAppPath = Join-Path (Split-Path $PSScriptRoot -Parent) 'oil-git.exe'
-if (-not (Test-Path $TaskAppPath)) { $TaskAppPath = Join-Path $env:LOCALAPPDATA 'oil-git\oil-git.exe' }
+if (-not (Test-Path $TaskAppPath)) { $TaskAppPath = Join-Path $env:LOCALAPPDATA 'Oil Git\oil-git.exe' }
 if (-not (Test-Path $TaskAppPath)) {
-    throw 'oil-git was not found. Install the application first. / 未找到 oil-git，请先安装应用。'
+    throw 'Oil Git was not found. Install the application first. / 未找到 Oil Git，请先安装应用。'
 }
 $TaskCommand = ''
 $TaskLocaleValue = $false

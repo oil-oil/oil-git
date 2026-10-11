@@ -568,9 +568,9 @@ pub fn run() {
     }
     if args.first().is_some_and(|a| a == "--help" || a == "-h") {
         if language == CliLanguage::Chinese {
-            println!("oil-git 只读 Git 查看工具\n\n用法：\n打开：oil-git open <项目路径> [--view changes|history]\n读取：oil-git inspect <项目路径> --json\nSkill：oil-git skill [--path]\n语言：oil-git --lang en|zh-CN <命令>\n无参数启动桌面界面。");
+            println!("Oil Git 只读 Git 查看工具\n\n用法：\n打开：oil-git open <项目路径> [--view changes|history]\n读取：oil-git inspect <项目路径> --json\nSkill：oil-git skill [--path]\n语言：oil-git --lang en|zh-CN <命令>\n无参数启动桌面界面。");
         } else {
-            println!("oil-git read-only Git viewer\n\nUsage:\nOpen: oil-git open <project-path> [--view changes|history]\nInspect: oil-git inspect <project-path> --json\nSkill: oil-git skill [--path]\nLanguage: oil-git --lang en|zh-CN <command>\nRun without arguments to launch the desktop app.");
+            println!("Oil Git read-only Git viewer\n\nUsage:\nOpen: oil-git open <project-path> [--view changes|history]\nInspect: oil-git inspect <project-path> --json\nSkill: oil-git skill [--path]\nLanguage: oil-git --lang en|zh-CN <command>\nRun without arguments to launch the desktop app.");
         }
         return;
     }
@@ -676,7 +676,7 @@ pub fn run() {
             open_git_install
         ])
         .run(tauri::generate_context!())
-        .expect("无法启动 oil-git");
+        .expect("无法启动 Oil Git");
 }
 
 #[cfg(test)]

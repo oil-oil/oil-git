@@ -1,14 +1,14 @@
 ---
 name: oil-git
-description: 用 oil-git 打开用户的本地 Git 项目，查看真实分支、提交、待提交修改和冲突。用户要求用 oil-git 查看项目，或将当前处理的仓库定位到桌面视图时使用。只负责读取与展示，不执行 Git 写操作、网站浏览或云端仓库管理。
+description: 用 Oil Git 打开用户的本地 Git 项目，查看真实分支、提交、待提交修改和冲突。用户要求用 Oil Git 查看项目，或将当前处理的仓库定位到桌面视图时使用。只负责读取与展示，不执行 Git 写操作、网站浏览或云端仓库管理。
 license: MIT
 metadata:
   version: "0.1.0"
 ---
 
-# oil-git
+# Oil Git
 
-此 Skill 需要本地 oil-git 桌面应用、系统 Git 和本地命令执行能力。
+此 Skill 需要本地 Oil Git 桌面应用、系统 Git 和本地命令执行能力。
 
 根据当前工作区或用户明确给出的路径，判断用户要查看哪个本地项目。只有存在多个候选且上下文无法判断时才询问。
 
@@ -18,7 +18,7 @@ metadata:
 
 macOS 安装包提供以下启动器：
 
-    /Applications/oil-git.app/Contents/Resources/bin/oil-git
+    "/Applications/Oil Git.app/Contents/Resources/bin/oil-git"
 
 若应用安装在其他位置，使用对应 `.app` 中的相同相对路径。Windows 使用应用安装目录中的 `oil-git.exe`。可选 PowerShell 启动器为 `bin/oil-git.ps1`，参数相同；不要为运行它修改用户或系统执行策略。
 

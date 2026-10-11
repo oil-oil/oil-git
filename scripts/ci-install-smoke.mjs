@@ -92,8 +92,8 @@ try {
       mountPoint,
     ]);
     mounted = true;
-    const app = path.join(temporary, "安装 with space", "oil-git.app");
-    run("ditto", [path.join(mountPoint, "oil-git.app"), app]);
+    const app = path.join(temporary, "安装 with space", "Oil Git.app");
+    run("ditto", [path.join(mountPoint, "Oil Git.app"), app]);
     run("hdiutil", ["detach", mountPoint]);
     mounted = false;
     executable = path.join(app, "Contents", "MacOS", "oil-git");
@@ -142,8 +142,8 @@ try {
   });
   check("English and Chinese CLI and bundled Skills", () => {
     for (const [locale, file, helpPattern] of [
-      ["en", "SKILL.md", /Usage:/],
-      ["zh-CN", "SKILL.zh-CN.md", /用法/],
+      ["en", "SKILL.md", /^Oil Git read-only Git viewer\n\nUsage:/],
+      ["zh-CN", "SKILL.zh-CN.md", /^Oil Git 只读 Git 查看工具\n\n用法：/],
     ]) {
       assert.match(cli(["--help", "--lang", locale]), helpPattern);
       assert.match(launcher(["--lang", locale, "--help"]), helpPattern);

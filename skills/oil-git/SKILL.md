@@ -1,14 +1,14 @@
 ---
 name: oil-git
-description: Open a user's local Git project in oil-git and inspect real branches, commits, changes, and conflicts. Use when the user asks to inspect a project with oil-git or to locate the repository they are working on in the desktop view. Read-only display only; do not use for Git write operations, website browsing, or cloud repository management.
+description: Open a user's local Git project in Oil Git and inspect real branches, commits, changes, and conflicts. Use when the user asks to inspect a project with Oil Git or to locate the repository they are working on in the desktop view. Read-only display only; do not use for Git write operations, website browsing, or cloud repository management.
 license: MIT
 metadata:
   version: "0.1.0"
 ---
 
-# oil-git
+# Oil Git
 
-This Skill requires the local oil-git desktop app, system Git, and permission to run local commands.
+This Skill requires the local Oil Git desktop app, system Git, and permission to run local commands.
 
 Determine which local project the user means from the current workspace or a path they gave you. Ask only if there are multiple plausible projects and context does not resolve the choice.
 
@@ -18,7 +18,7 @@ Check whether `oil-git` is already available. If it is, use that command without
 
 On macOS, the app includes this launcher:
 
-    /Applications/oil-git.app/Contents/Resources/bin/oil-git
+    "/Applications/Oil Git.app/Contents/Resources/bin/oil-git"
 
 If the app is installed elsewhere, use that app's corresponding path. On Windows, use `oil-git.exe` in the app's installation directory. The optional PowerShell launcher is `bin/oil-git.ps1`; it accepts the same arguments. Do not change a user or machine execution policy to run it.
 

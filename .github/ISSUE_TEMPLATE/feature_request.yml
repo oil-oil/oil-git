@@ -13,6 +13,6 @@ body:
     id: proposal
     attributes:
       label: Proposed behavior / 建议的行为
-      description: Describe the interaction and any alternatives. oil-git does not perform Git writes. / 描述交互与备选方式。oil-git 不提供 Git 写操作。
+      description: Describe the interaction and any alternatives. Oil Git does not perform Git writes. / 描述交互与备选方式。Oil Git 不提供 Git 写操作。
     validations:
       required: true

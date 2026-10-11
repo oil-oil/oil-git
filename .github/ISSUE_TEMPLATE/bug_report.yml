@@ -1,5 +1,5 @@
 name: Bug report / 问题反馈
-description: Report unexpected behavior in oil-git / 报告应用问题
+description: Report unexpected behavior in Oil Git / 报告应用问题
 labels: []
 body:
   - type: textarea

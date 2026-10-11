@@ -2,11 +2,14 @@
 
 ## Product and repository access
 
-- oil-git is an independent, read-only desktop tool. Read real Git data from the repository selected by the user. Do not add Git write operations, a browser product, or simulated successful data.
+- Oil Git is an independent, read-only desktop tool. Read real Git data from the repository selected by the user. Do not add Git write operations, a browser product, or simulated successful data.
 - Viewing must not change observed files, the index, refs, configuration, or the LFS object store. Do not download content or invoke external repository converters. Use the bundled read-only filter for standard LFS. Tests use independent temporary repositories.
 - Discover changes through Git rather than scanning all working-directory file contents. Bound diff memory and label truncated output.
 - Child-process timeouts observe only the Child started by that request. Do not register a global SIGCHLD handler.
 - Unloaded parents at pagination boundaries must not appear as root commits. Branch filtering does not switch branches. Remote status describes locally available records only.
+
+- `site/` holds the static landing page for https://git.oiloil.org, deployed on Vercel from that directory. It is not part of the application bundle; the application must not load anything from it.
+- `src-tauri/icons/src/` holds the icon mark and the composed 1024 px master. Keep `icon.png`, `icon.icns`, and `icon.ico` in step with the master.
 
 ## Requests and state
 

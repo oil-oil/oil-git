@@ -509,7 +509,11 @@ fn unresolved_lfs_conflict_uses_index_stage_pointers_and_never_hashes_markers() 
     let ours_content = b"current branch materialized content";
     let theirs_content = b"incoming branch materialized content";
     let switched = f.raw_git_without_filters(&["switch", "-c", "current"], None);
-    assert!(switched.status.success());
+    assert!(
+        switched.status.success(),
+        "switch current failed: {}",
+        String::from_utf8_lossy(&switched.stderr)
+    );
     f.write("conflict.bin", ours_content);
     f.cmd(&["add", "--", "conflict.bin"]);
     f.commit("current branch LFS change");
@@ -545,7 +549,11 @@ fn unresolved_lfs_conflict_uses_index_stage_pointers_and_never_hashes_markers() 
     f.cmd(&["add", "--", "conflict.bin"]);
 
     let switched = f.raw_git_without_filters(&["switch", "current"], None);
-    assert!(switched.status.success());
+    assert!(
+        switched.status.success(),
+        "switch back to current failed: {}",
+        String::from_utf8_lossy(&switched.stderr)
+    );
     let merged = f.raw_git_without_filters(&["merge", "--no-commit", "incoming"], None);
     assert!(!merged.status.success(), "binary LFS edits should conflict");
     let markers = b"<<<<<<< current\nmarker text must not become an LFS object\n=======\nincoming marker text\n>>>>>>> incoming\n";

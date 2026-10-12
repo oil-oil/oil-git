@@ -145,8 +145,14 @@ try {
       ["en", "SKILL.md", /^Oil Git read-only Git viewer\n\nUsage:/],
       ["zh-CN", "SKILL.zh-CN.md", /^Oil Git 只读 Git 查看工具\n\n用法：/],
     ]) {
-      assert.match(cli(["--help", "--lang", locale]), helpPattern);
-      assert.match(launcher(["--lang", locale, "--help"]), helpPattern);
+      assert.match(
+        normalizeLineEndings(cli(["--help", "--lang", locale])),
+        helpPattern,
+      );
+      assert.match(
+        normalizeLineEndings(launcher(["--lang", locale, "--help"])),
+        helpPattern,
+      );
       const skillPath = cli(["skill", "--path", "--lang", locale]);
       assert.equal(
         fs.realpathSync(skillPath),

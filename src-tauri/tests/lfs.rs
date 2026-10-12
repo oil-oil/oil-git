@@ -12,6 +12,7 @@ struct Fixture {
     _temp: TempDir,
     repo: PathBuf,
     git: Git,
+    empty_config: PathBuf,
 }
 
 impl Fixture {
@@ -38,10 +39,14 @@ impl Fixture {
             fs::set_permissions(&helper, permissions).unwrap();
         }
         let git = Git::with_lfs_helper(discovered.binary, helper);
+        // An empty file stands in for the global config; Git for Windows rejects the NUL device.
+        let empty_config = temp.path().join("empty.gitconfig");
+        fs::write(&empty_config, b"").unwrap();
         let fixture = Self {
             _temp: temp,
             repo,
             git,
+            empty_config,
         };
         fixture.cmd(&["init", "-b", "main"]);
         fixture.cmd(&["config", "user.name", "LFS Test"]);
@@ -141,10 +146,7 @@ impl Fixture {
             command.env_remove(key);
         }
         command
-            .env(
-                "GIT_CONFIG_GLOBAL",
-                if cfg!(windows) { "NUL" } else { "/dev/null" },
-            )
+            .env("GIT_CONFIG_GLOBAL", &self.empty_config)
             .env("GIT_CONFIG_NOSYSTEM", "1");
         let mut child = command.spawn().unwrap();
         if let Some(input) = input {

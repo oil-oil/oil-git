@@ -346,6 +346,15 @@ const en: Record<string, Translation> = {
   "标题：{value}": "Subject: {value}",
   查看原始诊断: "View original diagnostic",
   "原提交行号：{line}": "Original commit line: {line}",
+  在差异中搜索: "Search in diff",
+  无匹配: "No matches",
+  上一个匹配: "Previous match",
+  下一个匹配: "Next match",
+  "上一个匹配（Shift+Enter）": "Previous match (Shift+Enter)",
+  "下一个匹配（Enter）": "Next match (Enter)",
+  清除搜索: "Clear search",
+  关闭搜索: "Close search",
+  "关闭搜索（Esc）": "Close search (Esc)",
 };
 
 export function detectLanguage(locale?: string | null): Language {

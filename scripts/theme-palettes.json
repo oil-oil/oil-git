@@ -42,7 +42,11 @@
     "lane-bg-2": "#403a2d",
     "lane-bg-3": "#2e4043",
     "lane-bg-4": "#2e3b49",
-    "lane-bg-5": "#443239"
+    "lane-bg-5": "#443239",
+    "search-match": "#e5b23a",
+    "search-match-ink": "#2a2300",
+    "search-current": "#61afef",
+    "search-current-ink": "#0a2233"
   },
   "light": {
     "bg": "#fafafa",
@@ -87,7 +91,11 @@
     "lane-bg-2": "#f3ecd9",
     "lane-bg-3": "#e1eef0",
     "lane-bg-4": "#e5ecf6",
-    "lane-bg-5": "#f6e5e7"
+    "lane-bg-5": "#f6e5e7",
+    "search-match": "#e0b437",
+    "search-match-ink": "#2a2300",
+    "search-current": "#276cc9",
+    "search-current-ink": "#ffffff"
   },
   "green": {
     "bg": "#242c27",
@@ -132,6 +140,10 @@
     "lane-bg-2": "#403a2d",
     "lane-bg-3": "#2e4043",
     "lane-bg-4": "#2e3b49",
-    "lane-bg-5": "#443239"
+    "lane-bg-5": "#443239",
+    "search-match": "#e5c07b",
+    "search-match-ink": "#241d06",
+    "search-current": "#98c379",
+    "search-current-ink": "#12210e"
   }
 }

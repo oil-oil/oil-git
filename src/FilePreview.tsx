@@ -583,6 +583,9 @@ export function FilePreviewDiff({
     before: string | null | undefined;
     after: string | null | undefined;
   } | null>(null);
+  // The source diff lives in a collapsed disclosure, so it only owns the find
+  // shortcut while the view is shown and this section is open.
+  const [sourceOpen, setSourceOpen] = useState(false);
   const beforeUrl = preview.before?.dataUrl,
     afterUrl = preview.after?.dataUrl;
   const decodeFailure = () =>
@@ -658,9 +661,18 @@ export function FilePreviewDiff({
         </div>
       )}
       {patch && !patch.includes("Binary files ") && (
-        <details className="raw-diff">
+        <details
+          className="raw-diff"
+          open={sourceOpen}
+          onToggle={(event) => setSourceOpen(event.currentTarget.open)}
+        >
           <summary>{t("源码差异")}</summary>
-          <CodeDiff patch={patch} layout="unified" includeMetadata />
+          <CodeDiff
+            patch={patch}
+            layout="unified"
+            includeMetadata
+            active={active && sourceOpen}
+          />
         </details>
       )}
     </div>

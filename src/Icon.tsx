@@ -40,6 +40,8 @@ export function Icon({ name, size = 18 }: { name: string; size?: number }) {
         <path d="m16 16 5 5" />
       </>
     ),
+    up: <path d="m6 15 6-6 6 6" />,
+    down: <path d="m6 9 6 6 6-6" />,
     filter: <path d="M4 6h16M7 12h10m-7 6h4" />,
     right: <path d="m9 6 6 6-6 6" />,
     target: (

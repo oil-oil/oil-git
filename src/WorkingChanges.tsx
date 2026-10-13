@@ -111,6 +111,8 @@ export function ChangesSidebar({
   onFile: (value: WorkingFile) => void;
 }) {
   const [collapsed, setCollapsed] = useState<string[]>([]);
+  const [query, setQuery] = useState("");
+  const input = useRef<HTMLInputElement>(null);
   const { t } = useI18n();
   const treeCache = useRef<{
     files: FileState[];
@@ -126,34 +128,114 @@ export function ChangesSidebar({
     treeCache.current = { files, groups: next };
     return next;
   }, [files]);
+  const needle = query.toLowerCase();
+  const filtering = needle.length > 0;
+  const visibleGroups = useMemo(
+    () =>
+      groups.map((group) => {
+        const visible = filtering
+          ? group.files.filter((entry) =>
+              entry.path.toLowerCase().includes(needle),
+            )
+          : group.files;
+        return {
+          ...group,
+          total: group.files.length,
+          files: visible,
+          tree: filtering ? buildChangeTree(visible) : group.tree,
+        };
+      }),
+    [groups, filtering, needle],
+  );
+  const selectionHidden =
+    filtering &&
+    !!file &&
+    !visibleGroups.some(
+      (group) =>
+        group.mode === file.mode &&
+        group.files.some((entry) => entry.path === file.path),
+    );
+  const clearFilter = () => {
+    setQuery("");
+    input.current?.focus();
+  };
+  const Heading = filtering ? "div" : "button";
   return (
     <div className="changes-tree" aria-label={t("源代码管理文件列表")}>
+      {(files.length > 0 || filtering) && (
+        <div className="changes-filter">
+          <Icon name="filter" size={13} />
+          <input
+            ref={input}
+            type="search"
+            value={query}
+            spellCheck={false}
+            placeholder={t("按路径筛选文件")}
+            aria-label={t("按路径筛选文件")}
+            onChange={(event) => setQuery(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key !== "Escape") return;
+              event.preventDefault();
+              event.stopPropagation();
+              clearFilter();
+            }}
+          />
+          {filtering && (
+            <button
+              type="button"
+              className="icon-button"
+              aria-label={t("清除筛选")}
+              title={t("清除筛选")}
+              onClick={clearFilter}
+            >
+              <Icon name="close" size={13} />
+            </button>
+          )}
+        </div>
+      )}
+      {selectionHidden && (
+        <p className="changes-filter-note">{t("已选中的文件不在筛选结果中")}</p>
+      )}
       {!files.length && (
         <div className="source-clean">
           <Icon name="check" size={24} />
           <p>{t("没有待提交的更改")}</p>
         </div>
       )}
-      {groups
+      {files.length > 0 &&
+        visibleGroups.every((group) => !group.files.length) && (
+          <div className="source-clean" role="status">
+            <Icon name="filter" size={24} />
+            <p>{t("没有匹配的文件")}</p>
+          </div>
+        )}
+      {visibleGroups
         .filter((g) => g.files.length)
         .map((g) => (
           <section className="change-group" key={g.mode}>
-            <button
+            <Heading
               className="change-group-heading"
-              aria-expanded={!collapsed.includes(g.mode)}
-              onClick={() =>
-                setCollapsed((old) =>
-                  old.includes(g.mode)
-                    ? old.filter((v) => v !== g.mode)
-                    : [...old, g.mode],
-                )
+              aria-expanded={
+                filtering ? undefined : !collapsed.includes(g.mode)
+              }
+              onClick={
+                filtering
+                  ? undefined
+                  : () =>
+                      setCollapsed((old) =>
+                        old.includes(g.mode)
+                          ? old.filter((v) => v !== g.mode)
+                          : [...old, g.mode],
+                      )
               }
             >
               <Icon name="right" size={12} />
               <strong>{t(g.title)}</strong>
-              <span>{g.files.length}</span>
-            </button>
-            <Collapse expanded={!collapsed.includes(g.mode)}>
+              <span title={filtering ? t("匹配 / 总数") : undefined}>
+                {filtering ? `${g.files.length}/${g.total}` : g.files.length}
+              </span>
+            </Heading>
+            <Collapse expanded={filtering || !collapsed.includes(g.mode)}>
               {renderChangeEntries(
                 g.tree,
                 g.mode,
@@ -162,12 +244,31 @@ export function ChangesSidebar({
                 collapsed,
                 setCollapsed,
                 t,
+                needle,
               )}
             </Collapse>
           </section>
         ))}
     </div>
   );
+}
+
+function highlightMatch(text: string, needle: string): ReactNode {
+  if (!needle) return text;
+  const pattern = new RegExp(
+    needle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+    "gi",
+  );
+  const parts: ReactNode[] = [];
+  let cursor = 0;
+  for (const match of text.matchAll(pattern)) {
+    if (match.index > cursor) parts.push(text.slice(cursor, match.index));
+    parts.push(<mark key={match.index}>{match[0]}</mark>);
+    cursor = match.index + match[0].length;
+  }
+  if (!parts.length) return text;
+  if (cursor < text.length) parts.push(text.slice(cursor));
+  return parts;
 }
 
 function renderChangeEntries(
@@ -178,8 +279,11 @@ function renderChangeEntries(
   collapsed: string[],
   setCollapsed: (update: (old: string[]) => string[]) => void,
   t: (key: string) => string,
+  needle = "",
   depth = 0,
 ): ReactNode {
+  const filtering = needle.length > 0;
+  const Heading = filtering ? "div" : "button";
   return entries.map((entry) => {
     if (entry.kind === "file") {
       const f = entry.file;
@@ -214,7 +318,9 @@ function renderChangeEntries(
           onClick={() => onFile({ path: f.path, mode })}
         >
           <FileIcon path={f.path} />
-          <span className="source-file-name">{name}</span>
+          <span className="source-file-name">
+            {highlightMatch(name ?? "", needle)}
+          </span>
           <span
             className={
               "source-status " +
@@ -243,26 +349,29 @@ function renderChangeEntries(
 
     const folderPath = terminal.path;
     const folderKey = `folder:${mode}:${entry.directory.path}`;
-    const isCollapsed = collapsed.includes(folderKey);
+    const isCollapsed = !filtering && collapsed.includes(folderKey);
     return (
       <div className="change-directory" key={entry.directory.path}>
-        <button
+        <Heading
           className="change-directory-heading"
           style={{ "--change-tree-indent": `${depth * 12}px` } as CSSProperties}
           aria-label={folderPath}
-          aria-expanded={!isCollapsed}
+          aria-expanded={filtering ? undefined : !isCollapsed}
           title={folderPath}
-          onClick={() =>
-            setCollapsed((old) =>
-              old.includes(folderKey)
-                ? old.filter((value) => value !== folderKey)
-                : [...old, folderKey],
-            )
+          onClick={
+            filtering
+              ? undefined
+              : () =>
+                  setCollapsed((old) =>
+                    old.includes(folderKey)
+                      ? old.filter((value) => value !== folderKey)
+                      : [...old, folderKey],
+                  )
           }
         >
           <Icon name="right" size={12} />
-          <span>{labelParts.join("/")}</span>
-        </button>
+          <span>{highlightMatch(labelParts.join("/"), needle)}</span>
+        </Heading>
         <Collapse expanded={!isCollapsed}>
           {renderChangeEntries(
             terminal.entries,
@@ -272,6 +381,7 @@ function renderChangeEntries(
             collapsed,
             setCollapsed,
             t,
+            needle,
             depth + 1,
           )}
         </Collapse>

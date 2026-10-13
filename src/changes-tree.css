@@ -2,6 +2,49 @@
   min-width: 0;
 }
 
+.changes-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+}
+
+.changes-filter input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  border: 0;
+  padding: 6px 0;
+  background: transparent;
+  font: 13px var(--font);
+  color: var(--text);
+}
+
+.changes-filter input::placeholder {
+  color: var(--muted);
+}
+
+.changes-filter input::-webkit-search-cancel-button,
+.changes-filter input::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.changes-filter-note {
+  padding: 8px 12px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.changes-tree mark {
+  background: var(--selected-bg);
+  color: var(--text);
+  font-weight: inherit;
+}
+
 .changes-tree .change-directory-heading {
   display: flex;
   width: 100%;

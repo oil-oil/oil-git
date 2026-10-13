@@ -1,7 +1,13 @@
 // @vitest-environment jsdom
 import { useState } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  within,
+} from "@testing-library/react";
 import { ChangesSidebar, SourceEditor } from "./WorkingChanges";
 import type { Diff, FileState } from "./types";
 import type { WorkingFile } from "./useWorkingCopy";
@@ -142,5 +148,191 @@ describe("更改目录树", () => {
       unstaged,
     );
     expect(unstaged.classList.contains("selected")).toBe(true);
+  });
+});
+
+describe("按路径筛选更改", () => {
+  it("三个范围按完整路径筛选，不区分大小写，并显示匹配数与总数", () => {
+    const files = [
+      makeFile("src/conflict.ts", { conflict: true, xy: "UU" }),
+      makeFile("src/staged.ts", { staged: true, unstaged: false, xy: "M " }),
+      makeFile("docs/staged.md", { staged: true, unstaged: false, xy: "M " }),
+      makeFile("src/working.ts"),
+      makeFile("README.md"),
+    ];
+    render(<ChangesSidebar files={files} file={null} onFile={() => {}} />);
+    fireEvent.change(screen.getByRole("searchbox"), {
+      target: { value: "SRC/" },
+    });
+
+    expect(
+      screen.getByRole("button", { name: "src/conflict.ts · 冲突" }),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("button", { name: "src/staged.ts · 已暂存" }),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("button", { name: "src/working.ts · 未暂存" }),
+    ).toBeTruthy();
+    expect(
+      screen.queryByRole("button", { name: "docs/staged.md · 已暂存" }),
+    ).toBeNull();
+    expect(
+      screen.queryByRole("button", { name: "README.md · 未暂存" }),
+    ).toBeNull();
+    for (const [title, count] of [
+      ["合并的更改", "1/1"],
+      ["暂存的更改", "1/2"],
+      ["更改", "1/2"],
+    ]) {
+      const section = screen.getByText(title).closest("section")!;
+      expect(within(section).getByTitle("匹配 / 总数").textContent).toBe(count);
+    }
+    fireEvent.click(screen.getByRole("button", { name: "清除筛选" }));
+    expect(
+      screen.getByRole("button", { name: "README.md · 未暂存" }),
+    ).toBeTruthy();
+  });
+
+  it("筛选不触发文件选择，清空后恢复原选择及范围", () => {
+    const files = [
+      makeFile("src/shared.ts", { staged: true, xy: "MM" }),
+      makeFile("README.md"),
+    ];
+    const onFile = vi.fn();
+    const file: WorkingFile = { path: "src/shared.ts", mode: "staged" };
+    render(<ChangesSidebar files={files} file={file} onFile={onFile} />);
+    fireEvent.change(screen.getByRole("searchbox"), {
+      target: { value: "missing" },
+    });
+    expect(screen.getByRole("status").textContent).toContain("没有匹配的文件");
+    expect(screen.getByText("已选中的文件不在筛选结果中")).toBeTruthy();
+    expect(onFile).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("button", { name: "清除筛选" }));
+    expect(
+      screen
+        .getByRole("button", { name: "src/shared.ts · 已暂存" })
+        .classList.contains("selected"),
+    ).toBe(true);
+    expect(
+      screen
+        .getByRole("button", { name: "src/shared.ts · 未暂存" })
+        .classList.contains("selected"),
+    ).toBe(false);
+    expect(onFile).not.toHaveBeenCalled();
+  });
+
+  it("筛选自动展开匹配项，清空后恢复分组及目录的折叠状态", () => {
+    render(
+      <ChangesSidebar
+        files={[makeFile("src/main.ts"), makeFile("README.md")]}
+        file={null}
+        onFile={() => {}}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "src" }));
+    fireEvent.click(screen.getByRole("button", { name: /^更改/ }));
+    fireEvent.change(screen.getByRole("searchbox"), {
+      target: { value: "main" },
+    });
+    expect(
+      screen.getByRole("button", { name: "src/main.ts · 未暂存" }),
+    ).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "清除筛选" }));
+    const group = screen.getByRole("button", { name: /^更改/ });
+    expect(group.getAttribute("aria-expanded")).toBe("false");
+    fireEvent.click(group);
+    expect(
+      screen.getByRole("button", { name: "src" }).getAttribute("aria-expanded"),
+    ).toBe("false");
+  });
+
+  it("按字面匹配标点和空格，并高亮可见的命中内容", () => {
+    render(
+      <ChangesSidebar
+        files={[makeFile("src/[draft] copy.ts"), makeFile("src/draft.ts")]}
+        file={null}
+        onFile={() => {}}
+      />,
+    );
+    fireEvent.change(screen.getByRole("searchbox"), {
+      target: { value: "[DRAFT] " },
+    });
+    expect(
+      screen.getByRole("button", { name: "src/[draft] copy.ts · 未暂存" }),
+    ).toBeTruthy();
+    expect(
+      screen.queryByRole("button", { name: "src/draft.ts · 未暂存" }),
+    ).toBeNull();
+    expect(screen.getByText("[draft]").textContent).toBe("[draft] ");
+    fireEvent.change(screen.getByRole("searchbox"), { target: { value: " " } });
+    expect(
+      screen.getByRole("button", { name: "src/[draft] copy.ts · 未暂存" }),
+    ).toBeTruthy();
+    expect(
+      screen.queryByRole("button", { name: "src/draft.ts · 未暂存" }),
+    ).toBeNull();
+  });
+
+  it("刷新沿用筛选；工作区变干净后仍能清除筛选", () => {
+    const view = render(
+      <ChangesSidebar
+        files={[makeFile("src/main.ts")]}
+        file={null}
+        onFile={() => {}}
+      />,
+    );
+    const input = screen.getByRole("searchbox") as HTMLInputElement;
+    fireEvent.change(input, { target: { value: "src/" } });
+    view.rerender(
+      <ChangesSidebar
+        files={[makeFile("src/new.ts"), makeFile("README.md")]}
+        file={null}
+        onFile={() => {}}
+      />,
+    );
+    expect(input.value).toBe("src/");
+    expect(
+      screen.getByRole("button", { name: "src/new.ts · 未暂存" }),
+    ).toBeTruthy();
+    expect(
+      screen.queryByRole("button", { name: "README.md · 未暂存" }),
+    ).toBeNull();
+    view.rerender(<ChangesSidebar files={[]} file={null} onFile={() => {}} />);
+    expect(screen.getByText("没有待提交的更改")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "清除筛选" }));
+    view.rerender(
+      <ChangesSidebar
+        files={[makeFile("README.md")]}
+        file={null}
+        onFile={() => {}}
+      />,
+    );
+    expect(
+      screen.getByRole("button", { name: "README.md · 未暂存" }),
+    ).toBeTruthy();
+  });
+
+  it("Esc 清除并保留输入焦点，不触发工作区的快捷键", () => {
+    const onKeyDown = vi.fn();
+    render(
+      <div onKeyDown={onKeyDown}>
+        <ChangesSidebar
+          files={[makeFile("README.md")]}
+          file={null}
+          onFile={() => {}}
+        />
+      </div>,
+    );
+    const input = screen.getByRole("searchbox") as HTMLInputElement;
+    input.focus();
+    fireEvent.change(input, { target: { value: "missing" } });
+    fireEvent.keyDown(input, { key: "Escape" });
+    expect(input.value).toBe("");
+    expect(document.activeElement).toBe(input);
+    expect(onKeyDown).not.toHaveBeenCalled();
+    expect(
+      screen.getByRole("button", { name: "README.md · 未暂存" }),
+    ).toBeTruthy();
   });
 });

@@ -13,6 +13,7 @@ macOS may request access to Desktop or other protected folders. Respond to the s
 ## Explore changes and history
 
 - The persistent sidebar separates **Staged changes**, **Changes**, and **Merge changes** when present. A file can appear in both staged and unstaged scopes; each selection compares the appropriate bytes.
+- Filter changed files by any part of their path, without case sensitivity. Matching folders expand automatically; group counts show matches/total. Filtering preserves the selected file and its diff. Clear the field or press Esc to restore the complete list and its previous collapsed folders.
 - **Changes** and **History** share the right-hand workspace. Switching views preserves file selection, history filters, and scroll positions. Selecting a changed file opens Changes.
 - The commit graph shows actual parents, branches, tags, and HEAD. Filtering a branch changes the view without checking it out. **Go to HEAD** locates the current commit.
 - Select a commit to read its changed files. Ordinary and merge commits compare against their first parent; an initial commit shows added content.

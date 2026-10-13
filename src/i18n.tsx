@@ -104,6 +104,12 @@ const en: Record<string, Translation> = {
   "正在读取差异…": "Reading diff…",
   "选择文件，查看修改": "Select a file to inspect its changes",
   工作区干净: "Working tree clean",
+  按路径筛选文件: "Filter files by path",
+  没有匹配的文件: "No matching files",
+  清除筛选: "Clear filter",
+  "匹配 / 总数": "Matches / total",
+  已选中的文件不在筛选结果中:
+    "The selected file is outside the current filter.",
   提交信息: "Commit information",
   复制提交信息: "Copy commit information",
   "提交：{value}": "Commit: {value}",

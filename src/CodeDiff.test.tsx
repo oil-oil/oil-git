@@ -63,7 +63,7 @@ describe("CodeDiff 变高换行", () => {
     ].join("\n");
     const { container } = render(
       <div className="diff-result">
-        <CodeDiff patch={patch} layout="unified" />
+        <CodeDiff patch={patch} layout="unified" active />
       </div>,
     );
 
@@ -397,17 +397,17 @@ const SAMPLE_PATCH = [
   "+bar",
 ].join("\n");
 
-// The search bar is collapsed by default, so tests that type into it open it
-// through the visible toggle first (same entry a user clicks).
+// The collapsed bar renders nothing visible, so tests open it the only way a
+// user can: Cmd/Ctrl+F (which also focuses the input). The diff must be active.
 function openSearch() {
-  fireEvent.click(screen.getByRole("button", { name: "在差异中搜索" }));
+  fireEvent.keyDown(window, { key: "f", metaKey: true });
 }
 
 describe("CodeDiff 差异内搜索", () => {
   it("统一差异中高亮匹配行并显示匹配数量", () => {
     const { container } = render(
       <div className="diff-result">
-        <CodeDiff patch={SAMPLE_PATCH} layout="unified" />
+        <CodeDiff patch={SAMPLE_PATCH} layout="unified" active />
       </div>,
     );
     openSearch();
@@ -429,7 +429,7 @@ describe("CodeDiff 差异内搜索", () => {
   it("上下按钮在匹配之间移动当前行，并可循环", () => {
     const { container } = render(
       <div className="diff-result">
-        <CodeDiff patch={SAMPLE_PATCH} layout="unified" />
+        <CodeDiff patch={SAMPLE_PATCH} layout="unified" active />
       </div>,
     );
     openSearch();
@@ -460,7 +460,7 @@ describe("CodeDiff 差异内搜索", () => {
   it("无匹配时禁用导航并提示", () => {
     const { container } = render(
       <div className="diff-result">
-        <CodeDiff patch={SAMPLE_PATCH} layout="unified" />
+        <CodeDiff patch={SAMPLE_PATCH} layout="unified" active />
       </div>,
     );
     openSearch();
@@ -483,7 +483,7 @@ describe("CodeDiff 差异内搜索", () => {
   it("清除查询后移除高亮与计数", () => {
     const { container } = render(
       <div className="diff-result">
-        <CodeDiff patch={SAMPLE_PATCH} layout="unified" />
+        <CodeDiff patch={SAMPLE_PATCH} layout="unified" active />
       </div>,
     );
     openSearch();
@@ -505,7 +505,7 @@ describe("CodeDiff 差异内搜索", () => {
   it("Enter 跳到下一个匹配，Shift+Enter 上一个", () => {
     const { container } = render(
       <div className="diff-result">
-        <CodeDiff patch={SAMPLE_PATCH} layout="unified" />
+        <CodeDiff patch={SAMPLE_PATCH} layout="unified" active />
       </div>,
     );
     openSearch();
@@ -531,7 +531,7 @@ describe("CodeDiff 差异内搜索", () => {
     ].join("\n");
     const { container } = render(
       <div className="diff-result">
-        <CodeDiff patch={patch} layout="unified" />
+        <CodeDiff patch={patch} layout="unified" active />
       </div>,
     );
     const viewport = container.querySelector<HTMLElement>(
@@ -554,6 +554,7 @@ describe("CodeDiff 差异内搜索", () => {
         <CodeDiff
           patch={"@@ -1,3 +1,3 @@\n ctx\n-old foo left\n+new foo right\n ctx2"}
           layout="split"
+          active
         />
       </div>,
     );
@@ -576,7 +577,7 @@ describe("CodeDiff 差异内搜索", () => {
   it("内容变化时计数、当前高亮与定位保持一致", () => {
     const { container, rerender } = render(
       <div className="diff-result">
-        <CodeDiff patch={SAMPLE_PATCH} layout="unified" />
+        <CodeDiff patch={SAMPLE_PATCH} layout="unified" active />
       </div>,
     );
     openSearch();
@@ -602,6 +603,7 @@ describe("CodeDiff 差异内搜索", () => {
             " middle",
           ].join("\n")}
           layout="unified"
+          active
         />
       </div>,
     );
@@ -620,7 +622,7 @@ describe("CodeDiff 差异内搜索", () => {
   it("输入法组合输入时 Enter 不触发匹配导航", () => {
     const { container } = render(
       <div className="diff-result">
-        <CodeDiff patch={SAMPLE_PATCH} layout="unified" />
+        <CodeDiff patch={SAMPLE_PATCH} layout="unified" active />
       </div>,
     );
     openSearch();
@@ -665,7 +667,7 @@ describe("CodeDiff 差异内搜索", () => {
     cleanup();
     const { container } = render(
       <div className="diff-result">
-        <CodeDiff patch={patch} layout="unified" />
+        <CodeDiff patch={patch} layout="unified" active />
       </div>,
     );
     openSearch();
@@ -685,7 +687,7 @@ describe("CodeDiff 差异内搜索", () => {
     );
     const { container } = render(
       <div className="diff-result">
-        <CodeDiff patch={patch} layout="unified" />
+        <CodeDiff patch={patch} layout="unified" active />
       </div>,
     );
     openSearch();
@@ -716,7 +718,7 @@ describe("CodeDiff 差异内搜索", () => {
     ].join("\n");
     const { container } = render(
       <div className="diff-result">
-        <CodeDiff patch={patch} layout="unified" />
+        <CodeDiff patch={patch} layout="unified" active />
       </div>,
     );
     openSearch();
@@ -738,7 +740,7 @@ describe("CodeDiff 差异内搜索", () => {
     const patch = ["@@ -1,2 +1,3 @@", " keep", "+foo foo foo"].join("\n");
     const { container } = render(
       <div className="diff-result">
-        <CodeDiff patch={patch} layout="unified" />
+        <CodeDiff patch={patch} layout="unified" active />
       </div>,
     );
     openSearch();
@@ -771,7 +773,7 @@ describe("CodeDiff 差异内搜索", () => {
         <CodeDiff patch={SAMPLE_PATCH} layout="unified" active />
       </div>,
     );
-    // Collapsed by default: only the toggle shows, no textbox yet.
+    // Collapsed by default: nothing visible shows, no textbox yet.
     expect(screen.queryByRole("textbox", { name: "在差异中搜索" })).toBeNull();
     fireEvent.keyDown(window, { key: "f", metaKey: true });
     // Cmd+F opens the bar and focuses the input.
@@ -790,7 +792,7 @@ describe("CodeDiff 差异内搜索", () => {
   it("隐藏差异不抢 Cmd+F 键盘事件", () => {
     const { container } = render(
       <div className="diff-result">
-        <CodeDiff patch={SAMPLE_PATCH} layout="unified" />
+        <CodeDiff patch={SAMPLE_PATCH} layout="unified" active={false} />
       </div>,
     );
     // Not active and collapsed: there is no shortcut owner at all.
@@ -803,7 +805,11 @@ describe("CodeDiff 差异内搜索", () => {
   it("纯新增行在双栏只归属右侧（变更后），左侧（变更前）保持为空", () => {
     const { container } = render(
       <div className="diff-result">
-        <CodeDiff patch={"@@ -0,0 +1,2 @@\n+first\n+second"} layout="split" />
+        <CodeDiff
+          patch={"@@ -0,0 +1,2 @@\n+first\n+second"}
+          layout="split"
+          active
+        />
       </div>,
     );
     // The before column (side 0) stays empty for the added lines.
@@ -848,7 +854,11 @@ describe("CodeDiff 差异内搜索", () => {
   it("大小写展开字符的部分匹配高亮整个原文，且展示原文一字不变", () => {
     const { container } = render(
       <div className="diff-result">
-        <CodeDiff patch={"@@ -1,2 +1,3 @@\n ctx\n+İfoo"} layout="unified" />
+        <CodeDiff
+          patch={"@@ -1,2 +1,3 @@\n ctx\n+İfoo"}
+          layout="unified"
+          active
+        />
       </div>,
     );
     openSearch();
@@ -898,7 +908,7 @@ const CONFLICT_DIFF = {
 describe("差异内搜索快捷键接入", () => {
   it("冲突双方可见差异响应 Cmd+F 打开搜索，折叠的共同起点与原始差异不抢焦点", () => {
     const { container } = render(<DiffView data={CONFLICT_DIFF} />);
-    // Only the two visible sides own the shortcut (as collapsed toggles); the
+    // Only the two visible sides own the shortcut (as collapsed markers); the
     // collapsed base and the collapsed raw diff do not.
     const owners = container.querySelectorAll("[data-find-shortcut]");
     expect(owners).toHaveLength(2);
@@ -923,9 +933,9 @@ describe("差异内搜索快捷键接入", () => {
   it("展开原始差异后其搜索入口获得快捷键", () => {
     const { container } = render(<DiffView data={CONFLICT_DIFF} />);
     const rawDiff = container.querySelector(".raw-diff") as HTMLDetailsElement;
-    // Collapsed: the raw diff's search toggle is not a shortcut owner.
+    // Collapsed: the raw diff's search marker is not a shortcut owner.
     expect(rawDiff.querySelector("[data-find-shortcut]")).toBeNull();
-    // Open the disclosure: its diff becomes active and its toggle claims it.
+    // Open the disclosure: its diff becomes active and its marker claims it.
     rawDiff.open = true;
     fireEvent(rawDiff, new Event("toggle"));
     expect(rawDiff.querySelector("[data-find-shortcut]")).not.toBeNull();
@@ -933,26 +943,35 @@ describe("差异内搜索快捷键接入", () => {
 });
 
 describe("差异内搜索栏开合", () => {
-  it("默认收起：只显示搜索入口，不显示输入框与导航按钮", () => {
+  it("默认收起：整条搜索栏完全消失，只留零占位标记", () => {
     const { container } = render(
       <div className="diff-result">
-        <CodeDiff patch={SAMPLE_PATCH} layout="unified" />
+        <CodeDiff patch={SAMPLE_PATCH} layout="unified" active />
       </div>,
     );
-    expect(screen.getByRole("button", { name: "在差异中搜索" })).not.toBeNull();
+    // Collapsed renders nothing visible: no search box, no navigation or close
+    // buttons, no icon, and no .diff-search bar taking up any height.
     expect(screen.queryByRole("textbox", { name: "在差异中搜索" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "在差异中搜索" })).toBeNull();
     expect(screen.queryByRole("button", { name: "下一个匹配" })).toBeNull();
     expect(screen.queryByRole("button", { name: "关闭搜索" })).toBeNull();
+    expect(container.querySelector(".diff-search")).toBeNull();
     expect(container.querySelector(".diff-search-count")).toBeNull();
+    // The only footprint is a display:none marker that still lets Cmd/Ctrl+F
+    // find this diff as the first shortcut owner.
+    const marker = container.querySelector(".diff-search-marker");
+    expect(marker).not.toBeNull();
+    expect(container.querySelectorAll("[data-find-shortcut]")).toHaveLength(1);
   });
 
-  it("点击搜索入口展开并聚焦输入框", () => {
+  it("Ctrl+F（Windows）也能打开并聚焦输入框", () => {
     render(
       <div className="diff-result">
-        <CodeDiff patch={SAMPLE_PATCH} layout="unified" />
+        <CodeDiff patch={SAMPLE_PATCH} layout="unified" active />
       </div>,
     );
-    fireEvent.click(screen.getByRole("button", { name: "在差异中搜索" }));
+    // The collapsed bar renders nothing, so the shortcut is the only way in.
+    fireEvent.keyDown(window, { key: "f", ctrlKey: true });
     const input = screen.getByRole("textbox", { name: "在差异中搜索" });
     expect(document.activeElement).toBe(input);
     expect(screen.getByRole("button", { name: "下一个匹配" })).not.toBeNull();
@@ -961,7 +980,7 @@ describe("差异内搜索栏开合", () => {
   it("关闭按钮收起搜索栏并清空查询", () => {
     const { container } = render(
       <div className="diff-result">
-        <CodeDiff patch={SAMPLE_PATCH} layout="unified" />
+        <CodeDiff patch={SAMPLE_PATCH} layout="unified" active />
       </div>,
     );
     openSearch();
@@ -972,7 +991,7 @@ describe("差异内搜索栏开合", () => {
       "1 / 3",
     );
     fireEvent.click(screen.getByRole("button", { name: "关闭搜索" }));
-    // Bar collapses back to the toggle; the query and highlights are gone.
+    // Bar collapses to nothing; the query and highlights are gone.
     expect(screen.queryByRole("textbox", { name: "在差异中搜索" })).toBeNull();
     expect(container.querySelector(".diff-search-count")).toBeNull();
     expect(container.querySelectorAll("mark")).toHaveLength(0);
@@ -990,7 +1009,7 @@ describe("差异内搜索栏开合", () => {
   it("Esc 收起搜索栏并清空查询", () => {
     const { container } = render(
       <div className="diff-result">
-        <CodeDiff patch={SAMPLE_PATCH} layout="unified" />
+        <CodeDiff patch={SAMPLE_PATCH} layout="unified" active />
       </div>,
     );
     openSearch();
@@ -1000,8 +1019,9 @@ describe("差异内搜索栏开合", () => {
     fireEvent.keyDown(input, { key: "Escape" });
     expect(screen.queryByRole("textbox", { name: "在差异中搜索" })).toBeNull();
     expect(container.querySelectorAll("mark")).toHaveLength(0);
-    // The toggle is back and owns the shortcut again.
-    expect(screen.getByRole("button", { name: "在差异中搜索" })).not.toBeNull();
+    // Nothing visible is rendered again; the marker owns the shortcut.
+    expect(container.querySelector(".diff-search-marker")).not.toBeNull();
+    expect(container.querySelectorAll("[data-find-shortcut]")).toHaveLength(1);
   });
 
   it("收起后再按 Cmd+F 能重新打开并聚焦", () => {
@@ -1025,7 +1045,7 @@ describe("差异内搜索栏开合", () => {
     (label) => {
       const { container } = render(
         <div className="diff-result">
-          <CodeDiff patch={SAMPLE_PATCH} layout="unified" />
+          <CodeDiff patch={SAMPLE_PATCH} layout="unified" active />
         </div>,
       );
       openSearch();
@@ -1048,17 +1068,18 @@ describe("差异内搜索栏开合", () => {
       ).toBeNull();
       expect(container.querySelector(".diff-search-count")).toBeNull();
       expect(container.querySelectorAll("mark")).toHaveLength(0);
-      // The toggle is shown again, ready to reopen.
-      expect(
-        screen.getByRole("button", { name: "在差异中搜索" }),
-      ).not.toBeNull();
+      // Nothing visible is rendered again; the marker owns the shortcut.
+      expect(container.querySelector(".diff-search-marker")).not.toBeNull();
+      expect(container.querySelectorAll("[data-find-shortcut]")).toHaveLength(
+        1,
+      );
     },
   );
 
   it("组合输入未结束就关闭，重开后搜索与 Esc 都恢复正常", () => {
     const { container } = render(
       <div className="diff-result">
-        <CodeDiff patch={SAMPLE_PATCH} layout="unified" />
+        <CodeDiff patch={SAMPLE_PATCH} layout="unified" active />
       </div>,
     );
     openSearch();

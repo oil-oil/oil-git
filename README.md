@@ -26,7 +26,7 @@
 | Finding content in a long diff | In-diff search: highlights matches, shows a count, and steps through them                                |
 | What is the repository state?  | Worktrees, stashes, merge or rebase state, and locally recorded upstream counts                          |
 
-For long diffs, use in-diff search to jump straight to what matters. The search bar is collapsed by default, showing only an entry point above the diff; click it or press **⌘F** (or **Ctrl+F** on Windows) to expand it and focus the input, then press **Esc** or the close button to collapse it. Once expanded, type a keyword to highlight every match and see the count; step through them with the up/down buttons or **Enter**／**Shift+Enter**, and the current match scrolls into view. Matching runs against the code itself (not the `+`/`-` gutter markers), keeps the exact spacing you typed, and resets to the first match when you switch files or layouts.
+For long diffs, use in-diff search to jump straight to what matters. The search bar is collapsed by default and renders nothing visible — no icon, height, border, or blank strip. Press **⌘F** (or **Ctrl+F** on Windows) to open it and focus the input; press **Esc** or the close button to collapse it, which clears the query and highlights and leaves no footprint behind. Once open, type a keyword to highlight every match and see the count; step through them with the up/down buttons or **Enter**／**Shift+Enter**, and the current match scrolls into view. Matching runs against the code itself (not the `+`/`-` gutter markers), keeps the exact spacing you typed, and resets to the first match when you switch files or layouts.
 
 ## Screenshot
 

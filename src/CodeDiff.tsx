@@ -290,18 +290,23 @@ export function CodeDiff(props: PatchCodeDiffProps | RawCodeDiffProps) {
   const composing = useRef(false);
   const [composingValue, setComposingValue] = useState<string | null>(null);
   const inputValue = composingValue ?? search;
-  // The search bar is collapsed by default to keep the diff clean; the toggle,
-  // the input and Cmd/Ctrl+F all open it, close/Esc collapse it.
+  // The search bar is collapsed by default: nothing is rendered, so it leaves
+  // no icon, height, border or blank strip. Cmd/Ctrl+F opens it and focuses the
+  // input; Esc or the close button collapses it and clears the query.
   const [searchOpen, setSearchOpen] = useState(false);
-  const searchToggleRef = useRef<HTMLButtonElement>(null);
+  // Points at whichever element currently represents this diff's search entry —
+  // the hidden marker while collapsed, the bar while open — so the Cmd/F
+  // listener can tell whether it is the first visible owner.
+  const searchBarRef = useRef<HTMLDivElement>(null);
+  const searchMarkerRef = useRef<HTMLSpanElement>(null);
   // Mirrored into a ref so the Cmd/F listener (keyed only on `active`) reads the
   // live open/collapsed state without re-subscribing.
   const searchOpenRef = useRef(false);
   useEffect(() => {
     searchOpenRef.current = searchOpen;
   }, [searchOpen]);
-  // Opening the bar (via toggle click or Cmd/Ctrl+F) focuses and selects the
-  // input so typing or a paste continues straight in.
+  // Opening the bar via Cmd/Ctrl+F focuses and selects the input so typing or a
+  // paste continues straight in.
   useEffect(() => {
     if (!searchOpen) return;
     searchInputRef.current?.focus();
@@ -415,12 +420,12 @@ export function CodeDiff(props: PatchCodeDiffProps | RawCodeDiffProps) {
         const first = document.querySelector<HTMLElement>(
           "[data-find-shortcut]",
         );
-        // While collapsed only the toggle carries the marker, and while open
-        // only the input does, so the first match in DOM order is this view's
-        // visible entry and owns the shortcut; the rest stand down.
+        // The entry ref points at the hidden marker while collapsed and the bar
+        // while open, and each active diff renders exactly one such element, so
+        // the first match in DOM order owns the shortcut and the rest stand down.
         const mine = searchOpenRef.current
-          ? searchInputRef.current
-          : searchToggleRef.current;
+          ? searchBarRef.current
+          : searchMarkerRef.current;
         if (first !== mine) return;
         event.preventDefault();
         if (searchOpenRef.current) {
@@ -808,6 +813,8 @@ export function CodeDiff(props: PatchCodeDiffProps | RawCodeDiffProps) {
       <div
         className="diff-search"
         role="search"
+        ref={searchBarRef}
+        data-find-shortcut={active ? "" : undefined}
         onKeyDown={(event) => {
           // Esc collapses the bar from any focus position (the input or a
           // navigation/close button) and must not bubble to the app's global
@@ -828,7 +835,6 @@ export function CodeDiff(props: PatchCodeDiffProps | RawCodeDiffProps) {
           spellCheck={false}
           placeholder={t("在差异中搜索")}
           aria-label={t("在差异中搜索")}
-          data-find-shortcut={active ? "" : undefined}
           onChange={(event) => {
             // While an IME composition is in flight, show the in-progress text but
             // don't run the query yet, so matches stay stable until it commits.
@@ -907,21 +913,16 @@ export function CodeDiff(props: PatchCodeDiffProps | RawCodeDiffProps) {
           <Icon name="close" size={15} />
         </button>
       </div>
-    ) : (
-      <div className="diff-search diff-search-collapsed">
-        <button
-          type="button"
-          ref={searchToggleRef}
-          className="diff-search-toggle"
-          onClick={() => setSearchOpen(true)}
-          aria-label={t("在差异中搜索")}
-          title={t("在差异中搜索")}
-          data-find-shortcut={active ? "" : undefined}
-        >
-          <Icon name="search" size={15} />
-        </button>
-      </div>
-    ));
+    ) : active ? (
+      // Collapsed renders nothing visible — just a zero-footprint marker so the
+      // Cmd/F first-owner logic can still locate this diff in DOM order.
+      <span
+        ref={searchMarkerRef}
+        className="diff-search-marker"
+        data-find-shortcut=""
+        aria-hidden="true"
+      />
+    ) : null);
 
   if (renderLayout === "unified")
     return (

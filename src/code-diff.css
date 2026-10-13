@@ -138,33 +138,10 @@
   border-bottom: 1px solid var(--line);
 }
 
-/* Collapsed search: just a compact trigger so the diff stays uncluttered. */
-.diff-result .diff-search-collapsed {
-  padding: 4px 8px;
-}
-
-.diff-result .diff-search-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  color: var(--faint);
-  background: transparent;
-  border: 0;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.diff-result .diff-search-toggle svg {
-  color: inherit;
-}
-
-.diff-result .diff-search-toggle:hover,
-.diff-result .diff-search-toggle:focus-visible {
-  color: var(--text);
-  background: var(--selection);
+/* Collapsed search renders no visible bar — only a zero-footprint marker so
+   the Cmd/Ctrl+F first-owner logic can still find this diff in DOM order. */
+.diff-result .diff-search-marker {
+  display: none;
 }
 
 .diff-result .diff-search > svg {

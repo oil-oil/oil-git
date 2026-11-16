@@ -81,6 +81,8 @@ npm run desktop
 
 开发需要 Node.js 22、Rust 和当前平台的 Tauri 开发依赖。参阅[开发文档](docs/zh-CN/development.md)和[使用说明](docs/zh-CN/usage.md)，也可阅读英文版[开发文档](docs/development.md)与[使用说明](docs/usage.md)。贡献前请阅读[贡献指南](docs/zh-CN/contributing.md)。
 
+想了解平时怎么让 AI 配合用好分支、PR 和 Worktree，可以参考 Oil Book 里的[《从 0 到 1 学会使用 Git 与 GitHub》](https://book.oiloil.org/articles/git-from-scratch?utm_source=github&utm_medium=referral&utm_campaign=oil-git-readme-zh)。
+
 ## 许可证
 
 [MIT](LICENSE)。文件类型图标来自 [Material Icon Theme](https://github.com/material-extensions/vscode-material-icon-theme)，其他随附素材见[第三方声明](docs/zh-CN/third-party-notices.md)。
